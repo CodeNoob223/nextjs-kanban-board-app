@@ -1,0 +1,66 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@import url('https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,300;0,400;1,300;1,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,600;0,700;1,600;1,700&display=swap');
+
+@font-face {
+  font-family: "SVN Monument";
+  src: url("/fonts/DC-Monument Extended Ultrabold.otf");
+}
+
+:root {
+  --foreground-rgb: 0, 0, 0;
+  --background-start-rgb: 214, 219, 220;
+  --background-end-rgb: 255, 255, 255;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --foreground-rgb: 255, 255, 255;
+    --background-start-rgb: 0, 0, 0;
+    --background-end-rgb: 0, 0, 0;
+  }
+}
+
+.font-body {
+  font-family: 'Work Sans', sans-serif;
+}
+
+.font-title {
+  font-family: 'Montserrat', sans-serif;
+}
+
+.font-header {
+  font-family: 'SVN Monument', sans-serif;
+}
+
+.slide-in {
+  animation: SlideIn 0.4s;
+  animation-fill-mode: forwards;
+}
+
+.exit {
+  animation: SlideOut 0.4s;
+  animation-fill-mode: forwards;
+}
+
+@keyframes SlideIn {
+  0% {
+    transform: translateX(120%);
+  }
+
+  100% {
+    transform: translateX(0);
+  }
+}
+
+@keyframes SlideOut {
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(120%);
+  }
+}
