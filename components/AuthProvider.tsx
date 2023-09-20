@@ -1,57 +1,52 @@
 "use client";
-import React, { useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import { Provider } from 'react-redux';
 import { store } from '@/store';
 import { signIn, signOut } from '@/store/slices/userDataSlice';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
-import { addNotification } from '@/store/slices/notificationSlice';
+import { Database } from '@/lib/database.types';
 
 export const AuthProvider = ({ children }: {
   children: React.ReactNode
 }) => {
-  const supabase = createClientComponentClient();
+  const supabase = createClientComponentClient<Database>();
   // create state values for user data and loading
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const isAuth = localStorage.getItem("isAuth");
     const getUserData = async () => {
-      const { data, error } = await supabase.auth.getUser();
+      const {data, error} = await supabase.auth.getSession();
 
       if (error) {
-        localStorage.clear();
-        store.dispatch(addNotification({
-          content: error.message!,
-          type: "error"
-        }));
+        console.log(error);
+        setLoading(false);
+        return;
       }
 
-      if (data.user) {
-        const userData = await supabase.from("profiles").select().eq("user_id", data.user.id);
+      if (data.session?.user) {
+        const userData = await supabase.from("profiles").select().eq("profile_id", data.session.user.id);
         if (userData.error) {
-          localStorage.clear();
+          console.log(userData.error);
           return;
         }
 
         if (userData.data) {
           store.dispatch(signIn({
-            ...data.user,
+            ...data.session.user,
             ...userData.data[0]
           }));
         }
-        setLoading(false);
       }
-
-      if (isAuth) {
-        getUserData();
-      }
+      setLoading(false);
     }
+
+    getUserData();
 
     // listen for changes to auth
     const { data: listener } = supabase.auth.onAuthStateChange(
       async (event, session) => {
         if (session?.user) {
-          const userData = await supabase.from("profiles").select().eq("user_id", session.user.id);
+          const userData = await supabase.from("profiles").select().eq("profile_id", session.user.id);
           if (userData.data) {
             store.dispatch(signIn({
               ...session.user,
@@ -64,7 +59,6 @@ export const AuthProvider = ({ children }: {
         setLoading(false);
       }
     );
-
     // cleanup the useEffect hook
     return () => {
       listener?.subscription.unsubscribe();
@@ -73,7 +67,7 @@ export const AuthProvider = ({ children }: {
   // use a provider to pass down the value
   return (
     <Provider store={store}>
-      {!loading && children}
+      {children}
     </Provider>
   );
 };

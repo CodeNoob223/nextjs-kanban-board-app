@@ -14,38 +14,42 @@ declare global {
     content: string
   }
 
-  interface ToDo {
-    id: number,
-    task: string | null,
+  interface Task {
+    task_id: number,
+    content: string | null,
     status: "Pending" | "Working" | "Done",
     inserted_at: string,
     profiles: {
       username: string | null,
     } | null,
     deadline: string | null,
-    team_id: string | null
+    project_id: string | null,
+    project_data?: Project,
+    progress: number
   }
 
-  interface ToDoColProps {
-    title: string,
-
-  }
-
-  type GetSupaBaseRes = {
-    data: ToDo[],
+  type GetSupaBaseRes<T> = {
+    data: T[],
     error: string
   }
 
-  type PostSupaBaseRes = {
-    data: ToDo,
+  type PostSupaBaseRes<T> = {
+    data: T,
     error: string
   }
 
-  type PutSupaBaseRes = PostSupaBaseRes;
+  type PutSupaBaseRes<T> = PostSupaBaseRes<T>;
 
   type DeleteSupaBaseRes = {
     id: number,
     error: string
+  }
+
+  interface Project {
+    project_id: number,
+    project_name: string,
+    team_lead: string,
+    joined_date: string
   }
 
   type DroppableIds = "working" | "pending" | "done";
@@ -59,9 +63,9 @@ declare global {
     role: string | null,
     updated_at: string | null,
     username: string | null,
-    app_metadata?: any, 
-    user_metadata?: any, 
-    aud?: any, 
+    app_metadata?: any,
+    user_metadata?: any,
+    aud?: any,
     created_at?: any
   }
 }

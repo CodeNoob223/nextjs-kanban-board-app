@@ -15,7 +15,7 @@ export const fetchTodos = createAsyncThunk("todos/fetchTodos", async (limit: num
     method: "GET"
   });
 
-  const data: GetSupaBaseRes = await res.json();
+  const data: GetSupaBaseRes<Task> = await res.json();
   if (data.error) {
     thunkApi.dispatch(addNotification({
       content: data.error,
@@ -28,23 +28,25 @@ export const fetchTodos = createAsyncThunk("todos/fetchTodos", async (limit: num
 });
 
 export const postTodo = createAsyncThunk("todos/postTodo", async (newTodo: {
-  task: string
+  task: string,
+  deadline: string
 }, thunkApi) => {
   const res = await fetch(`http://localhost:3000/todos/api`, {
     method: "post",
     body: JSON.stringify({
-      task: newTodo.task
+      task: newTodo.task,
+      deadline: newTodo.deadline
     })
   });
-  const data: PostSupaBaseRes = await res.json();
+  const data: PostSupaBaseRes<Task> = await res.json();
 
   if (!data.error) {
     let newOrder = JSON.parse(localStorage.getItem("pendingOrder") as string);
 
     if (!newOrder) {
-      newOrder = [data.data.id]
+      newOrder = [data.data.task_id]
     } else {
-      newOrder = [...newOrder, data.data.id];
+      newOrder = [...newOrder, data.data.task_id];
     }
 
     localStorage.setItem("pendingOrder", JSON.stringify(newOrder));
@@ -67,8 +69,8 @@ export const postTodo = createAsyncThunk("todos/postTodo", async (newTodo: {
 
 export const putTodo = createAsyncThunk("todos/putTodo", async (newTodo: {
   id: number,
-  from: ToDo["status"],
-  to: ToDo["status"],
+  from: Task["status"],
+  to: Task["status"],
   fromIndex: number,
   toIndex: number
 }, thunkApi) => {
@@ -76,7 +78,7 @@ export const putTodo = createAsyncThunk("todos/putTodo", async (newTodo: {
     method: "PUT",
     body: JSON.stringify(newTodo)
   });
-  const data: PutSupaBaseRes = await res.json();
+  const data: PutSupaBaseRes<Task> = await res.json();
 
   if (data.error) {
     thunkApi.dispatch(addNotification({
@@ -118,7 +120,7 @@ export const putTodo = createAsyncThunk("todos/putTodo", async (newTodo: {
 export const deleteTodos = createAsyncThunk("todos/deleteTodos", async (
   target: {
     id: number
-    status: ToDo["status"]
+    status: Task["status"]
   }, thunkApi
 ) => {
   const res = await fetch(`http://localhost:3000/todos/api`, {
@@ -156,41 +158,41 @@ export const deleteTodos = createAsyncThunk("todos/deleteTodos", async (
 
 const todosSlice = createSlice({
   name: "todos",
-  initialState: [] as ToDo[],
+  initialState: [] as Task[],
   reducers: {
-    addTodos: (state: ToDo[], action: PayloadAction<ToDo>) => {
+    addTodos: (state: Task[], action: PayloadAction<Task>) => {
       state = [...state, action.payload];
       return state;
     },
-    removeTodos: (state: ToDo[], action: PayloadAction<number>) => {
-      state = state.filter(td => td.id !== action.payload);
+    removeTodos: (state: Task[], action: PayloadAction<number>) => {
+      state = state.filter(td => td.task_id !== action.payload);
       return state;
     },
-    updateTodos: (state: ToDo[], action: PayloadAction<{
+    updateTodos: (state: Task[], action: PayloadAction<{
       id: number,
-      status: ToDo["status"]
+      status: Task["status"]
     }>) => {
       state = state.map(td => {
-        if (td.id === action.payload.id) {
+        if (td.task_id === action.payload.id) {
           td.status = action.payload.status;
         }
         return td;
       });
     },
-    setTodos: (state: ToDo[], action: PayloadAction<ToDo[]>) => {
+    setTodos: (state: Task[], action: PayloadAction<Task[]>) => {
       state = action.payload;
       return state;
     }
   },
   extraReducers: (builder) => {
-    builder.addCase(fetchTodos.fulfilled, (state: ToDo[], action: PayloadAction<ToDo[]>) => {
+    builder.addCase(fetchTodos.fulfilled, (state: Task[], action: PayloadAction<Task[]>) => {
       state = action.payload;
       return state;
     });
 
-    builder.addCase(putTodo.fulfilled, (state: ToDo[], action: PayloadAction<ToDo>) => {
+    builder.addCase(putTodo.fulfilled, (state: Task[], action: PayloadAction<Task>) => {
       state = state.map(td => {
-        if (td.id === action.payload.id) {
+        if (td.task_id === action.payload.task_id) {
           td = {
             ...td,
             status: action.payload.status
@@ -202,13 +204,13 @@ const todosSlice = createSlice({
       return state;
     });
 
-    builder.addCase(postTodo.fulfilled, (state: ToDo[], action: PayloadAction<ToDo>) => {
+    builder.addCase(postTodo.fulfilled, (state: Task[], action: PayloadAction<Task>) => {
       state = [...state, action.payload];
       return state;
     });
 
-    builder.addCase(deleteTodos.fulfilled, (state: ToDo[], action: PayloadAction<number>) => {
-      state = state.filter(td => td.id !== action.payload);
+    builder.addCase(deleteTodos.fulfilled, (state: Task[], action: PayloadAction<number>) => {
+      state = state.filter(td => td.task_id !== action.payload);
       return state;
     });
   }

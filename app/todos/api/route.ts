@@ -1,3 +1,4 @@
+import { Database } from "@/lib/database.types";
 import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
@@ -7,14 +8,15 @@ export async function GET(request: Request) {
   const limit = parseInt(searchParams.get("limit") || "1000");
 
   const supabase = createRouteHandlerClient({ cookies });
-  const { data, error } = await supabase.from("todos").select(`
-    id,
-    task,
+  const { data, error } = await supabase.from("tasks").select(`
+    task_id,
+    content,
     status,
     inserted_at,
     deadline,
     profiles (username),
-    team_id
+    progress,
+    project_id
   `).limit(limit);
 
   if (error) console.log(error);
@@ -22,19 +24,21 @@ export async function GET(request: Request) {
 };
 
 export async function POST(request: Request) {
-  const { task } = await request.json();
+  const { task, deadline } = await request.json();
 
-  const supabase = createRouteHandlerClient({ cookies });
-  const { data, error } = await supabase.from("todos").insert({
-    task: task
+  const supabase = createRouteHandlerClient<Database>({ cookies });
+  const { data, error } = await supabase.from("tasks").insert({
+    task: task,
+    deadline: deadline || null
   }).select(`
-    id,
-    task,
+    task_id,
+    content,
     status,
     inserted_at,
     deadline,
     profiles (username),
-    team_id
+    progress,
+    project_id
   `);
 
   if (error) console.log(error);
@@ -42,19 +46,20 @@ export async function POST(request: Request) {
 }
 
 export async function PUT(request: Request) {
-  const { id, from, to } = await request.json();
+  const { id, to } = await request.json();
 
   const supabase = createRouteHandlerClient({ cookies });
-  const { data, error } = await supabase.from("todos").update({
-    status: to as ToDo["status"]
-  }).match({ id }).select(`
-    id,
-    task,
+  const { data, error } = await supabase.from("tasks").update({
+    status: to as Task["status"]
+  }).match({ task_id: id }).select(`
+    task_id,
+    content,
     status,
     inserted_at,
     deadline,
     profiles (username),
-    team_id
+    progress,
+    project_id
   `);
 
   if (error) console.log(error);
@@ -65,8 +70,8 @@ export async function DELETE(request: Request) {
   const { id } = await request.json();
   const supabase = createRouteHandlerClient({ cookies });
 
-  const { data, error } = await supabase.from("todos").delete().eq('id', id).select('id');
+  const { data, error } = await supabase.from("tasks").delete().eq('task_id', id).select('task_id');
 
   if (error) console.log(error);
-  return NextResponse.json({ data: data ? data[0].id : null, error: error?.message || "" });
+  return NextResponse.json({ data: data ? data[0].task_id : null, error: error?.message || "" });
 }
