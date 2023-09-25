@@ -157,7 +157,8 @@ export default function ToDosList() {
 
     dispatch(updateTodos({
       id: newToDo.task_id,
-      status: newToDo.status
+      status: newToDo.status,
+      progress: ""
     }));
 
     // if (colName === "pending") {
@@ -177,7 +178,7 @@ export default function ToDosList() {
 
     if (from === destination) {
       if (result.source.index === result.source.index) return;
-      
+
       changeOrder(result.destination.index, result.source.index, destination);
     } else if (from != destination) {
       const newToDo = removeTask(result.source.index, from, destination);
@@ -233,7 +234,7 @@ export default function ToDosList() {
 
   return (
     <DragDropContext onDragEnd={handleOnDragEnd}>
-      <div className="flex min-[1130px]:flex-row xl:gap-4 gap-2 flex-wrap w-full">
+      <div className="flex min-[1130px]:flex-row xl:gap-4 min-[400px]:gap-2 gap-10 flex-wrap w-full">
         <ToDoCol
           deleteDraggable={deleteDraggable}
           dropableId="pending"

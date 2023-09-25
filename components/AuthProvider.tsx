@@ -33,7 +33,8 @@ export const AuthProvider = ({ children }: {
         if (userData.data) {
           store.dispatch(signIn({
             ...data.session.user,
-            ...userData.data[0]
+            ...userData.data[0],
+            projects: []
           }));
         }
       }
@@ -50,7 +51,8 @@ export const AuthProvider = ({ children }: {
           if (userData.data) {
             store.dispatch(signIn({
               ...session.user,
-              ...userData.data[0]
+              ...userData.data[0],
+              projects: []
             }));
           }
         } else {

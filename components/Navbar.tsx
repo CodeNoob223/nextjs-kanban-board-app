@@ -4,6 +4,7 @@ import { usePathname } from "next/navigation";
 import { useAppSelector } from "@/store/hooks";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import {FaSignOutAlt} from "react-icons/fa";
+import SmallUserAvatar from "./SmallUserAvatar";
 
 export default function Navbar(): JSX.Element {
   const user = useAppSelector(state => state.user);
@@ -28,12 +29,13 @@ export default function Navbar(): JSX.Element {
       </a>
       <div className="flex gap-4 sm:text-base text-sm items-center">
         {user ?
-          <>
-            <p className="text-slate-200 font-title font-bold">Chào, {user.username}</p>
+          <div className="flex flex-row gap-2 items-center">
+            <SmallUserAvatar url={user.avatar_url!} />
+            <p className="text-slate-200 font-title font-bold">{user.username}</p>
             <button onClick={handleSignOut} className="text-slate-200 hover:text-primary">
               <FaSignOutAlt className=" sm:text-xl text-base"/>
             </button>
-          </> :
+          </div> :
           <a href="/auth/login">
             <p className="text-slate-200 transition-colors hover:text-primary font-title">Đăng nhập</p>
           </a>

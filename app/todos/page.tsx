@@ -15,7 +15,7 @@ export const metadata: Metadata = {
   description: "Việc cá nhân của bạn"
 }
 
-export default function Todos() {
+export default function Page() {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const supabase = createClientComponentClient<Database>();
   const dispatch = useAppDispatch();

@@ -1,5 +1,5 @@
 "use client";
-import { FaLock, FaEnvelope, FaUser, FaHashtag } from "react-icons/fa";
+import { FaLock, FaEnvelope, FaUser, FaHashtag, FaImage, FaPhoneSquareAlt } from "react-icons/fa";
 import { useState, useEffect } from "react";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { Database } from "@/lib/database.types";
@@ -12,7 +12,9 @@ export default function RegisterPage(): JSX.Element {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [username, setUserName] = useState<string>("");
+  const [avatarUrl, setAvatarUrl] = useState<string>("");
   const [full_name, setFull_Name] = useState<string>("");
+  const [phone, setPhone] = useState<string>("");
   const supabase = createClientComponentClient<Database>();
   const router = useRouter();
   const dispatch = useAppDispatch();
@@ -75,23 +77,29 @@ export default function RegisterPage(): JSX.Element {
         data: {
           username: username.trim().replaceAll(" ", ""),
           full_name: full_name,
-          avatar_url: "https://picsum.photos/150/150?grayscale",
+          avatar_url: avatarUrl || "https://res.cloudinary.com/dtgopjlto/image/upload/v1695289420/user.png",
           role: "Member"
         },
         emailRedirectTo: `${location.origin}/auth/callback`,
       },
-      phone: "1800678"
+      phone: phone || "1800678"
     });
 
     if (error) {
-      localStorage.clear();
       dispatch(addNotification({
         content: error.message!,
         type: "error",
       }));
       return;
     }
-    location.reload();
+    dispatch(addNotification({
+      content: "Đăng ký thành công!",
+      type: "success",
+    }));
+
+    setTimeout(() => {
+      location.reload();
+    }, 3000);
   }
 
   return (
@@ -113,7 +121,7 @@ export default function RegisterPage(): JSX.Element {
         </div>
         <input
           id="email"
-          className="py-2 px-3 outline-none w-[40vw]"
+          className="py-2 px-3 outline-none sm:w-[40vw] w-full"
           type="text"
           name="email"
           placeholder="yourmail@email.com"
@@ -129,7 +137,7 @@ export default function RegisterPage(): JSX.Element {
         </div>
         <input
           id="password"
-          className="py-2 px-3 outline-none w-[40vw]"
+          className="py-2 px-3 outline-none sm:w-[40vw] w-full"
           type="password"
           name="password"
           placeholder="******************"
@@ -145,7 +153,7 @@ export default function RegisterPage(): JSX.Element {
         </div>
         <input
           id="username"
-          className="py-2 px-3 outline-none w-[40vw]"
+          className="py-2 px-3 outline-none sm:w-[40vw] w-full"
           type="username"
           name="username"
           placeholder="Biệt danh"
@@ -161,7 +169,7 @@ export default function RegisterPage(): JSX.Element {
         </div>
         <input
           id="full_name"
-          className="py-2 px-3 outline-none w-[40vw]"
+          className="py-2 px-3 outline-none sm:w-[40vw] w-full"
           type="full_name"
           name="full_name"
           placeholder="Họ tên"
@@ -171,6 +179,37 @@ export default function RegisterPage(): JSX.Element {
         />
       </div>
 
+      <div className="flex h-max w-full max-w-[400px] mx-auto border-slate-400 border-solid border-2 rounded overflow-hidden mb-2">
+        <div className="flex items-center bg-slate-200 border-r-2 border-slate-400 border-solid py-2 px-3">
+          <FaImage className="text-lg" />
+        </div>
+        <input
+          id="avatar_url"
+          className="py-2 px-3 outline-none sm:w-[40vw] w-full"
+          type="avatar_url"
+          name="avatar_url"
+          placeholder="https//... đường dẫn ảnh"
+          autoComplete="off"
+          onChange={(e) => setAvatarUrl(e.target.value)}
+          value={avatarUrl}
+        />
+      </div>
+
+      {/* <div className="flex h-max w-full max-w-[400px] mx-auto border-slate-400 border-solid border-2 rounded overflow-hidden mb-2">
+        <div className="flex items-center bg-slate-200 border-r-2 border-slate-400 border-solid py-2 px-3">
+          <FaPhoneSquareAlt className="text-lg" />
+        </div>
+        <input
+          id="phone"
+          className="py-2 px-3 outline-none sm:w-[40vw] w-full"
+          type="phone"
+          name="phone"
+          placeholder="Số điện thoại"
+          autoComplete="off"
+          onChange={(e) => setPhone(e.target.value)}
+          value={phone}
+        />
+      </div> */}
       <button type="button" onClick={handleSignUp} className="py-2 max-w-[400px] mx-auto px-4 bg-slate-950 hover:bg-primary hover:text-slate-950 transition-colors duration-200 rounded overflow-hidden w-full text-slate-100">
         <div className="flex gap-2 items-center w-max mx-auto">
           <FaEnvelope /> Đăng ký

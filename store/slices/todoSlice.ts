@@ -2,11 +2,11 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit/dist/createAction";
 import { addNotification } from "./notificationSlice";
 
-export const toLowerFirst = (str : string) : string => {
+export const toLowerFirst = (str: string): string => {
   return str[0].toLowerCase() + str.slice(1);
 }
 
-export const toUpperFirst = (str : string) : string => {
+export const toUpperFirst = (str: string): string => {
   return str[0].toUpperCase() + str.slice(1);
 }
 
@@ -28,14 +28,15 @@ export const fetchTodos = createAsyncThunk("todos/fetchTodos", async (limit: num
 });
 
 export const postTodo = createAsyncThunk("todos/postTodo", async (newTodo: {
-  task: string,
+  content: string,
   deadline: string
 }, thunkApi) => {
   const res = await fetch(`http://localhost:3000/todos/api`, {
     method: "post",
     body: JSON.stringify({
-      task: newTodo.task,
-      deadline: newTodo.deadline
+      content: newTodo.content,
+      deadline: newTodo.deadline,
+      project_id: ""
     })
   });
   const data: PostSupaBaseRes<Task> = await res.json();
@@ -72,7 +73,8 @@ export const putTodo = createAsyncThunk("todos/putTodo", async (newTodo: {
   from: Task["status"],
   to: Task["status"],
   fromIndex: number,
-  toIndex: number
+  toIndex: number,
+  progress: string
 }, thunkApi) => {
   const res = await fetch(`http://localhost:3000/todos/api`, {
     method: "PUT",
@@ -104,7 +106,7 @@ export const putTodo = createAsyncThunk("todos/putTodo", async (newTodo: {
     localStorage.setItem(fromColumn, JSON.stringify(fromOrder));
 
     let toOrder = JSON.parse(localStorage.getItem(toColumn) as string) as number[];
-    
+
     if (newTodo.toIndex === -1) {
       toOrder = [...toOrder, newTodo.id];
     } else {
@@ -123,11 +125,8 @@ export const deleteTodos = createAsyncThunk("todos/deleteTodos", async (
     status: Task["status"]
   }, thunkApi
 ) => {
-  const res = await fetch(`http://localhost:3000/todos/api`, {
-    method: "delete",
-    body: JSON.stringify({
-      id: target.id
-    })
+  const res = await fetch(`http://localhost:3000/todos/api?id=${target.id}`, {
+    method: "delete"
   });
 
   const data: DeleteSupaBaseRes = await res.json();
@@ -170,11 +169,17 @@ const todosSlice = createSlice({
     },
     updateTodos: (state: Task[], action: PayloadAction<{
       id: number,
-      status: Task["status"]
+      status: Task["status"],
+      progress: string
     }>) => {
       state = state.map(td => {
         if (td.task_id === action.payload.id) {
           td.status = action.payload.status;
+          if (action.payload.status === "Done") {
+            td.progress = 100;
+          } else if (action.payload.progress) {
+            td.progress = parseInt(action.payload.progress);
+          }
         }
         return td;
       });
@@ -186,7 +191,7 @@ const todosSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder.addCase(fetchTodos.fulfilled, (state: Task[], action: PayloadAction<Task[]>) => {
-      state = action.payload;
+      state = action.payload.filter(task => !task.project_id);
       return state;
     });
 
@@ -195,12 +200,13 @@ const todosSlice = createSlice({
         if (td.task_id === action.payload.task_id) {
           td = {
             ...td,
-            status: action.payload.status
-          } 
+            progress: action.payload.progress,
+            status: action.payload.progress === 100 ? "Done" : action.payload.status,
+          }
         }
         return td;
       });
-      
+
       return state;
     });
 

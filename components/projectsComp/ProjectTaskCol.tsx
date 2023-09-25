@@ -1,7 +1,7 @@
 import { Droppable } from "@hello-pangea/dnd"
-import TaskCard from "./TaskCard"
+import ProjectTaskCard from "./ProjectTaskCard"
 
-export default function TaskCol(props: {
+export default function ProjectTaskCol(props: {
   dropableId: DroppableIds,
   title: string,
   titleColor: "text-red-600" | "text-green-600" | "text-blue-600",
@@ -26,7 +26,7 @@ export default function TaskCol(props: {
           >
             {props.todoArr.map((todo, index) => {
               if (todo)
-                return <TaskCard
+                return <ProjectTaskCard
                   selfUnmount={props.deleteDraggable}
                   task_id={todo.task_id}
                   inserted_at={todo.inserted_at}
@@ -38,6 +38,7 @@ export default function TaskCol(props: {
                   deadline={todo.deadline}
                   project_id={todo.project_id}
                   progress={todo.progress}
+                  workers={todo.workers}
                 />
             })}
             {provided.placeholder}

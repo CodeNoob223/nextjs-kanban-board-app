@@ -1,4 +1,5 @@
 import { PostgrestError, User } from "@supabase/supabase-js";
+import { Database } from "./lib/database.types";
 
 export { };
 
@@ -7,6 +8,8 @@ declare global {
     search: string,
     data: berry[]
   }
+
+  type ForeignUser = Database["public"]["Tables"]["profiles"]["Row"];
 
   interface AppNotification {
     id: string,
@@ -23,9 +26,19 @@ declare global {
       username: string | null,
     } | null,
     deadline: string | null,
-    project_id: string | null,
+    project_id: number | null,
     project_data?: Project,
-    progress: number
+    progress: number,
+    workers: {profiles: {
+      profile_id: string,
+      username: string,
+      avatar_url: string
+    }}[]
+  }
+
+  type GetSupaBaseResSingle<T> = {
+    data: T,
+    error: string
   }
 
   type GetSupaBaseRes<T> = {
@@ -41,15 +54,55 @@ declare global {
   type PutSupaBaseRes<T> = PostSupaBaseRes<T>;
 
   type DeleteSupaBaseRes = {
-    id: number,
+    id: number | string,
     error: string
+  } 
+
+  interface ChatMessage {
+    message_id: number,
+    created_at: string,
+    project_id: number,
+    profiles: {
+      profile_id: string,
+      username: string,
+      avatar_url: string
+    },
+    content: string
+  }
+
+  interface ServerNotification {
+    notification_id: number,
+    created_at: string,
+    content: string,
+    title: string,
+    profile_id: string
+  }
+
+  interface ServerNotifState {
+    new: boolean,
+    data: ServerNotification[]
   }
 
   interface Project {
     project_id: number,
     project_name: string,
-    team_lead: string,
-    joined_date: string
+    team_lead: {
+      profile_id: string,
+      username: string,
+      avatar_url: string
+    },
+    created_at:string,
+    joined_date: string,
+    description: string,
+    tasks: Task[],
+    project_members: {
+      id: number,
+      profiles: {
+        profile_id: string,
+        username: string,
+        avatar_url: string
+      }
+    }[]
   }
 
   type DroppableIds = "working" | "pending" | "done";
@@ -59,13 +112,14 @@ declare global {
     updated_at: string | null,
     avatar_url: string | null,
     full_name: string | null,
-    id: string,
+    profile_id: string,
     role: string | null,
     updated_at: string | null,
     username: string | null,
     app_metadata?: any,
     user_metadata?: any,
     aud?: any,
-    created_at?: any
+    created_at?: any,
+    projects: Project[]
   }
 }

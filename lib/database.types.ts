@@ -116,19 +116,19 @@ export interface Database {
           created_at: string
           id: number
           task_id: number | null
-          user_id: string | null
+          profile_id: string | null
         }
         Insert: {
           created_at?: string
           id?: number
           task_id?: number | null
-          user_id?: string | null
+          profile_id?: string | null
         }
         Update: {
           created_at?: string
           id?: number
           task_id?: number | null
-          user_id?: string | null
+          profile_id?: string | null
         }
         Relationships: [
           {
@@ -138,8 +138,8 @@ export interface Database {
             referencedColumns: ["task_id"]
           },
           {
-            foreignKeyName: "profile_task_user_id_fkey"
-            columns: ["user_id"]
+            foreignKeyName: "profile_task_profile_id_fkey"
+            columns: ["profile_id"]
             referencedRelation: "profiles"
             referencedColumns: ["profile_id"]
           }
