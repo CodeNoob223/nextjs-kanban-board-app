@@ -1,7 +1,6 @@
 "use client";
 import { MyInput, MyLabel } from "@/components/NewTask";
 import { Spinner } from "@/components/Sidebar";
-import SmallUserAvatar from "@/components/SmallUserAvatar";
 import SmallUserCard from "@/components/SmallUserCard";
 import Button from "@/components/buttons/Button";
 import ProjectNewTask from "@/components/projectsComp/ProjectNewTask";
@@ -10,12 +9,11 @@ import { Database } from "@/lib/database.types";
 import { useAppDispatch } from "@/store";
 import { useAppSelector } from "@/store/hooks";
 import { addNotification } from "@/store/slices/notificationSlice";
-import { deleteOwnProject, deleteProjectMember, fetchNewProjectMember, fetchNewTaskData, fetchProjectData, filterProjectMember, filterProjectTask, removeTaskMember } from "@/store/slices/projectSlice";
+import { deleteOwnProject, fetchNewProjectMember, fetchNewTaskData, fetchProjectData, filterProjectMember, filterProjectTask, removeTaskMember } from "@/store/slices/projectSlice";
 import { filterUserProjectList, putProject } from "@/store/slices/userDataSlice";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
-import { Metadata } from "next";
 import { useEffect, useState } from "react";
-import { FaPen, FaSave, FaTrash, FaUserMinus } from "react-icons/fa";
+import { FaPen, FaSave, FaTrash } from "react-icons/fa";
 import { FaArrowRightFromBracket } from "react-icons/fa6";
 
 export default function Page({ params }: {
@@ -38,6 +36,32 @@ export default function Page({ params }: {
     project_name: project.project_name,
     description: project.description
   });
+
+  useEffect(() => {
+    const getData = async () => {
+      const user = await supabase.auth.getUser();
+      if (user.error) {
+        window.location.replace("/auth/login");
+        return;
+      }
+
+      if (project.project_id !== -1 && project.project_id === parseInt(params.slug)) {
+        setIsLoading(false);
+        return;
+      }
+
+      const res = await dispatch(fetchProjectData(parseInt(params.slug)));
+
+      if (res.meta.requestStatus === "rejected") {
+        console.log(res);
+        dispatch(filterUserProjectList(parseInt(params.slug)));
+        return;
+      }
+
+      setIsLoading(false);
+    };
+    getData();
+  }, [dispatch, params.slug, project.project_id, supabase.auth]);
 
   useEffect(() => {
     const channel = supabase.channel("project-tasks")
@@ -126,34 +150,10 @@ export default function Page({ params }: {
       })
       .subscribe();
 
-    const getData = async () => {
-      const user = await supabase.auth.getUser();
-      if (user.error) {
-        window.location.replace("/auth/login");
-        return;
-      }
-
-      if (project.project_id !== -1 && project.project_id === parseInt(params.slug)) {
-        setIsLoading(false);
-        return;
-      }
-
-      const res = await dispatch(fetchProjectData(parseInt(params.slug)));
-
-      if (res.meta.requestStatus === "rejected") {
-        console.log(res);
-        dispatch(filterUserProjectList(parseInt(params.slug)));
-        return;
-      }
-
-      setIsLoading(false);
-    };
-    getData();
-
     return () => {
       channel.unsubscribe();
     }
-  }, [params, dispatch, supabase, project]);
+  }, [params, dispatch, supabase, userData?.profile_id, project.project_members]);
 
   const updateProject = async () => {
     setEdit(prev => ({ ...prev, show: false }));
