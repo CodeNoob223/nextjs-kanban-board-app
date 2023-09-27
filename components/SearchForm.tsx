@@ -12,7 +12,7 @@ export default function SearchForm(props: {
   setSearchDate: (str: string) => void;
   setDeadline?: (str: string) => void;
 }): JSX.Element {
-  return <form className="p-2 bg-slate-400 rounded-sm flex gap-2 flex-wrap items-center my-3">
+  return <form className="p-2 bg-slate-200 sm:w-max w-full rounded-sm flex gap-2 flex-wrap items-center my-3">
     <MyLabel
       for="search"
       content="Tìm: "
