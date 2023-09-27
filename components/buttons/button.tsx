@@ -1,3 +1,4 @@
+"use client";
 export default function Button(props: {
   handleClick: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void,
   type: "button" | "submit" | "reset",
