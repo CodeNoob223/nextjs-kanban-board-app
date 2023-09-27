@@ -12,7 +12,11 @@ export default function SearchForm(props: {
   setSearchDate: (str: string) => void;
   setDeadline?: (str: string) => void;
 }): JSX.Element {
-  return <form className="p-2 bg-slate-200 sm:w-max w-full rounded-sm flex gap-2 flex-wrap items-center my-3">
+  return <form className="p-2 bg-slate-200 w-full rounded flex gap-2 flex-wrap items-center my-3"
+    style={{
+      maxWidth: props.deadlineInput ? "1000px" : "528px"
+    }}
+  >
     <MyLabel
       for="search"
       content="Tìm: "
