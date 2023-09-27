@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   title: 'Todos',
   description: 'Quản lý công việc hiệu quả!',
   icons: "/images/logo_black.png",
-  viewport: "width=device-width, initial-scale=1.0", 
+  viewport: "width=device-width, initial-scale=1.0" 
 }
 
 export default async function RootLayout({

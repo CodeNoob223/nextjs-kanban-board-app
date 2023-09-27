@@ -1,6 +1,6 @@
 "use client";
 import { usePathname } from "next/navigation";
-import { FaHome, FaUser, FaUsers, FaPlus, FaBell, FaBars, FaCircleNotch, FaTrashAlt, FaFileInvoice } from "react-icons/fa";
+import { FaHome, FaUser, FaUsers, FaPlus, FaBell, FaBars, FaCircleNotch, FaTrashAlt, FaFileInvoice, FaEnvelope } from "react-icons/fa";
 import { FaUserMinus, FaMessage, FaArrowRightFromBracket } from "react-icons/fa6"
 import Link from "next/link";
 import { useState, useEffect } from 'react';
@@ -12,6 +12,7 @@ import { deleteProject, fetchProjects, filterUserProjectList, postProject } from
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { Database } from "@/lib/database.types";
 import { addSN } from "@/store/slices/serverNotifSlice";
+import { setNew } from "@/store/slices/messageSlice";
 
 export function Separator(): JSX.Element {
   return <div className="w-[100%] h-[1px] bg-slate-600"></div>
@@ -27,7 +28,23 @@ export default function Sidebar(): JSX.Element {
   const dispatch = useAppDispatch();
   const user = useAppSelector(state => state.user);
   const sn = useAppSelector(state => state.serverNotif);
+  const messages = useAppSelector(state => state.chatMessage);
   const supabase = createClientComponentClient<Database>();
+
+  useEffect(() => {
+    const getProjects = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+
+      if (session) {
+        const data = await dispatch(fetchProjects(10)); // 10 is limit number
+
+        if (data.meta.requestStatus === "rejected") return;
+
+      }
+      setIsLoading(false);
+    }
+    getProjects();
+  }, [dispatch, supabase]);
 
   useEffect(() => {
     const channel = supabase.channel("profile-projects")
@@ -48,25 +65,23 @@ export default function Sidebar(): JSX.Element {
           dispatch(addSN(payload.new as ServerNotification));
         }
       })
+      .on("postgres_changes", {
+        event: "INSERT",
+        schema: "public",
+        table: "messages",
+      }, async (payload) => {
+        if (payload.table === "messages") {
+          if (user?.projects.find(project => project.project_id === payload.new.project_id))
+            if (user.profile_id !== payload.new.profile_id)
+              dispatch(setNew());
+        }
+      })
       .subscribe();
-
-    const getProjects = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-
-      if (session) {
-        const data = await dispatch(fetchProjects(10)); // 10 is limit number
-
-        if (data.meta.requestStatus === "rejected") return;
-
-      }
-      setIsLoading(false);
-    }
-    getProjects();
 
     return () => {
       channel.unsubscribe();
     }
-  }, [dispatch, supabase, user?.profile_id]);
+  }, [user?.profile_id, user?.projects, supabase, dispatch])
 
   const postNewProject = async () => {
     if (!projectId && !projectName) {
@@ -132,8 +147,8 @@ export default function Sidebar(): JSX.Element {
               <p className="font-bold">Trang chủ</p>
             </Link>
         }
-        {
-          pathname === `/profile/${user?.profile_id}` ?
+        {user &&
+          (pathname === `/profile/${user?.profile_id}` ?
             <Link href={`/profile/${user?.profile_id}`} className="relative w-full h-[40px] overflow-hidden bg-primary rounded flex items-center">
               <FaUser className="text-lg mx-3 flex-shrink-0 text-slate-950" />
               <p className="font-bold">Hồ sơ</p>
@@ -141,17 +156,17 @@ export default function Sidebar(): JSX.Element {
             : <Link href={`/profile/${user?.profile_id}`} className="w-full h-[40px] overflow-hidden bg-slate-950 hover:bg-primary rounded flex items-center text-slate-400 hover:text-slate-950">
               <FaUser className="text-lg mx-3 flex-shrink-0" />
               <p className="font-bold">Hồ sơ</p>
-            </Link>
+            </Link>)
         }
         <Separator />
         {
           pathname === "/notifications" ?
             <Link href="/notifications" className="relative w-full h-[40px] overflow-hidden bg-primary rounded flex items-center">
-              <FaBell className="text-xl mx-[10px] flex-shrink-0 text-slate-950" />
+              <FaEnvelope className="text-xl mx-[10px] flex-shrink-0 text-slate-950" />
               <p className="font-bold">Thông báo</p>
             </Link>
             : <Link href="/notifications" className="relative w-full h-[40px] overflow-hidden bg-slate-950 hover:bg-primary rounded flex items-center text-slate-400 hover:text-slate-950">
-              <FaBell className="text-xl mx-[10px] flex-shrink-0" />
+              <FaEnvelope className="text-xl mx-[10px] flex-shrink-0" />
               <p className="font-bold">Thông báo</p>
               {sn.new && <span className="absolute top-[6px] right-[6px] flex h-[10px] w-[10px]">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
@@ -161,27 +176,29 @@ export default function Sidebar(): JSX.Element {
         }
         {
           pathname === "/messages" ?
-            <Link href="/messages" className="relative w-full h-[40px] overflow-hidden bg-primary rounded flex items-center">
+            <Link href={`/messages?project=${user ? (user.projects.length > 0 ? user?.projects[0].project_id : 0) : 0}`} className="relative w-full h-[40px] overflow-hidden bg-primary rounded flex items-center">
               <FaMessage className="text-lg mx-[11px] flex-shrink-0 text-slate-950" />
               <p className="font-bold">Tin nhắn</p>
             </Link>
-            : <Link href="/messages" className="relative w-full h-[40px] overflow-hidden bg-slate-950 hover:bg-primary rounded flex items-center text-slate-400 hover:text-slate-950">
+            : <Link href={`/messages?project=${user ? (user.projects.length > 0 ? user?.projects[0].project_id : 0) : 0}`} className="relative w-full h-[40px] overflow-hidden bg-slate-950 hover:bg-primary rounded flex items-center text-slate-400 hover:text-slate-950">
               <FaMessage className="text-lg mx-[11px] flex-shrink-0" />
               <p className="font-bold">Tin nhắn</p>
-              {/* <span className="absolute top-[6px] right-[6px] flex h-[10px] w-[10px]">
+              {messages.isNew && <span className="absolute top-[6px] right-[6px] flex h-[10px] w-[10px]">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-[10px] w-[10px] bg-primary"></span>
-              </span> */}
+              </span>}
             </Link>
         }
         <Separator />
         {
           pathname === "/reports" ?
-            <Link href="/reports" className="relative w-full h-[40px] overflow-hidden bg-primary rounded flex items-center">
+            <Link href={`/reports?project=${user ? (user.projects.length > 0 ? user?.projects[0].project_id : 0) : 0}`}
+              className="relative w-full h-[40px] overflow-hidden bg-primary rounded flex items-center">
               <FaFileInvoice className="text-2xl mx-[9px] flex-shrink-0 text-slate-950" />
               <p className="font-bold">Báo cáo</p>
             </Link>
-            : <Link href="/reports" className="relative w-full h-[40px] overflow-hidden bg-slate-950 hover:bg-primary rounded flex items-center text-slate-400 hover:text-slate-950">
+            : <Link href={`/reports?project=${user ? (user.projects.length > 0 ? user?.projects[0].project_id : 0) : 0}`}
+              className="relative w-full h-[40px] overflow-hidden bg-slate-950 hover:bg-primary rounded flex items-center text-slate-400 hover:text-slate-950">
               <FaFileInvoice className="text-2xl mx-[9px] flex-shrink-0" />
               <p className="font-bold">Báo cáo</p>
             </Link>
@@ -192,7 +209,7 @@ export default function Sidebar(): JSX.Element {
           : user && user.projects.map(project => {
 
             return (
-              <div key={project.project_id} 
+              <div key={project.project_id}
                 className={`overflow-x-hidden relative w-full h-[40px] overflow-hidden ${pathname === "/projects/" + project.project_id ? "bg-primary text-slate-950" : "bg-slate-950 text-slate-400"} hover:bg-primary hover:text-slate-950 rounded flex items-center`}
               >
                 <Link href={"/projects/" + project.project_id} className="flex">

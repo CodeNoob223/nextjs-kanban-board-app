@@ -3,7 +3,7 @@ import type { PayloadAction } from "@reduxjs/toolkit/dist/createAction";
 import { addNotification } from "./notificationSlice";
 
 export const fetchProjects = createAsyncThunk("user/fetchProjects", async (limit: number, thunkApi) => {
-  const res = await fetch(`http://localhost:3000/projects/api?limit=${limit}`, {
+  const res = await fetch(`${location.origin}/projects/api?limit=${limit}`, {
     method: "get"
   });
 
@@ -25,7 +25,7 @@ export const postProject = createAsyncThunk("user/postProject", async ({ project
   project_id: string,
   project_name: string
 }, thunkApi) => {
-  const res = await fetch(`http://localhost:3000/projects/api/`, {
+  const res = await fetch(`${location.origin}/projects/api/`, {
     method: "post",
     body: JSON.stringify({
       project_id,
@@ -63,7 +63,7 @@ export const putProject = createAsyncThunk("user/putProject", async (params: {
   project_name?: string,
   description?: string,
 }, thunkApi) => {
-  const res = await fetch(`http://localhost:3000/projects/api/`, {
+  const res = await fetch(`${location.origin}/projects/api/`, {
     method: "put",
     body: JSON.stringify({
       project_id: params.project_id,
@@ -95,7 +95,7 @@ export const deleteProject = createAsyncThunk("user/deleteProject", async (param
   project_id: number,
   profile_id: string
 }, thunkApi) => {
-  const res = await fetch(`http://localhost:3000/projects/api?flag=${params.flag}&project=${params.project_id}&profile=${params.profile_id}`, {
+  const res = await fetch(`${location.origin}/projects/api?flag=${params.flag}&project=${params.project_id}&profile=${params.profile_id}`, {
     method: "delete"
   });
 

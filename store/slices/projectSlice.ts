@@ -2,7 +2,7 @@ import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { addNotification } from "./notificationSlice";
 
 export const fetchProjectData = createAsyncThunk("project/fetchProjectData", async (projectId: number, thunkApi) => {
-  const res = await fetch(`http://localhost:3000/projects/${projectId}/api?id=${projectId}`, {
+  const res = await fetch(`${location.origin}/projects/${projectId}/api?id=${projectId}`, {
     method: "get"
   });
 
@@ -26,7 +26,7 @@ export const postProjectTask = createAsyncThunk("project/addProjectTask", async 
   deadline: string,
   project_id: number
 }, thunkApi) => {
-  const res = await fetch(`http://localhost:3000/todos/api`, {
+  const res = await fetch(`${location.origin}/todos/api`, {
     method: "post",
     body: JSON.stringify({
       content: newTask.content,
@@ -48,7 +48,7 @@ export const postProjectTask = createAsyncThunk("project/addProjectTask", async 
 });
 
 export const fetchNewTaskData = createAsyncThunk("project/fetchNewTaskData", async (task_id: number, thunkApi) => {
-  const res = await fetch(`http://localhost:3000/todos/api?limit=1&task_id=${task_id}`, {
+  const res = await fetch(`${location.origin}/todos/api?limit=1&task_id=${task_id}`, {
     method: "get"
   });
 
@@ -69,7 +69,7 @@ export const fetchNewProjectMember = createAsyncThunk("project/fetchNewProjectMe
   profile_id: string,
   project_id: number 
 }, thunkApi) => {
-  const res = await fetch(`http://localhost:3000/projects/0/api/workers?profile=${target.profile_id}&project=${target.project_id}`, {
+  const res = await fetch(`${location.origin}/projects/0/api/workers?profile=${target.profile_id}&project=${target.project_id}`, {
     method: "get"
   });
 
@@ -103,7 +103,7 @@ export const putProjectTask = createAsyncThunk("project/putProjectTask", async (
   progress: string,
   workers: Task["workers"]
 }, thunkApi) => {
-  const res = await fetch(`http://localhost:3000/todos/api`, {
+  const res = await fetch(`${location.origin}/todos/api`, {
     method: "PUT",
     body: JSON.stringify(newTask)
   });
@@ -121,7 +121,7 @@ export const putProjectTask = createAsyncThunk("project/putProjectTask", async (
 });
 
 export const deleteProjectTask = createAsyncThunk("project/deleteProjectTask", async (task_id: number, thunkApi) => {
-  const res = await fetch(`http://localhost:3000/todos/api?id=${task_id}`, {
+  const res = await fetch(`${location.origin}/todos/api?id=${task_id}`, {
     method: "delete"
   });
 
@@ -140,7 +140,7 @@ export const deleteProjectTask = createAsyncThunk("project/deleteProjectTask", a
 });
 
 export const postTaskMember = createAsyncThunk("project/postTaskMember", async (task_id: number, thunkApi) => {
-  const res = await fetch(`http://localhost:3000/projects/0/api/workers`, {
+  const res = await fetch(`${location.origin}/projects/0/api/workers`, {
     method: "post",
     body: JSON.stringify({
       task_id
@@ -166,7 +166,7 @@ export const deleteTaskMember = createAsyncThunk("project/deleteTaskMember", asy
   profile_id: string,
   workersNum: number
 }, thunkApi) => {
-  const res = await fetch(`http://localhost:3000/projects/0/api/workers?profile=${target.profile_id}&task=${target.task_id}&length=${target.workersNum}`, {
+  const res = await fetch(`${location.origin}/projects/0/api/workers?profile=${target.profile_id}&task=${target.task_id}&length=${target.workersNum}`, {
     method: "delete"
   });
 
@@ -188,7 +188,7 @@ export const deleteOwnProject = createAsyncThunk("project/deleteProject", async 
   profile_id: string,
   project_id: number
 }, thunkApi) => {
-  const res = await fetch(`http://localhost:3000/projects/api?profile=${target.profile_id}&project=${target.project_id}&flag=delete`, {
+  const res = await fetch(`${location.origin}/projects/api?profile=${target.profile_id}&project=${target.project_id}&flag=delete`, {
     method: "delete"
   });
 
@@ -212,7 +212,7 @@ export const deleteProjectMember = createAsyncThunk("project/deleteProjectMember
   flag: "leave" | "delete"
 }, thunkApi) => {
   if (!confirm("Xóa thành viên?")) return;
-  const res = await fetch(`http://localhost:3000/projects/api?profile=${target.profile_id}&project=${target.project_id}&flag=${target.flag}`, {
+  const res = await fetch(`${location.origin}/projects/api?profile=${target.profile_id}&project=${target.project_id}&flag=${target.flag}`, {
     method: "delete"
   });
 

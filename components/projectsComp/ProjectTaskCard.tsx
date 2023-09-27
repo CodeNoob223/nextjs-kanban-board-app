@@ -86,8 +86,8 @@ export default function ProjectTaskCard(props: TaskCardType): JSX.Element {
               <FaEdit className="lg:text-2xl text-xl text-slate-400 hover:text-blue-600 cursor-pointer" onClick={() => setPopUp(true)} />
             </div>
             <p className="font lg:text-sm text-xs">Người đăng: {props.profiles?.username}</p>
-            <p className="font lg:text-sm text-xs">Ngày đăng: {new Date(props.inserted_at).toDateString()}</p>
-            <p className="font lg:text-sm text-xs"><span className="text-red-700 font-semibold">Hạn: </span>{props.deadline ? new Date(props.deadline).toDateString() : "None"}</p>
+            <p className="font lg:text-sm text-xs">Ngày đăng: {new Date(props.inserted_at).toLocaleDateString()}</p>
+            <p className="font lg:text-sm text-xs"><span className="text-red-700 font-semibold">Hạn: </span>{props.deadline ? new Date(props.deadline).toLocaleDateString() : "None"}</p>
             <p className="lg:text-base text-sm">Nội dung: {props.content}</p>
             <div className="flex items-center gap-2">
               <p>{props.progress}%</p>
@@ -100,7 +100,7 @@ export default function ProjectTaskCard(props: TaskCardType): JSX.Element {
             </div>
             {
               props.workers!.length > 0 &&
-              <section className="flex flex-col gap-1 mt-3">{props.workers?.map(worker => {
+              <section className="flex gap-1 mt-3">{props.workers?.map(worker => {
                 if (worker.profiles) return <SmallUserAvatar key={worker.profiles.username} url={worker.profiles.avatar_url} />
               })}</section>
             }

@@ -1,20 +1,25 @@
 "use client";
 import { MyLabel } from "@/components/NewTask";
 import ProjectMessageCard from "@/components/ProjectMessageCard";
+import SearchForm from "@/components/SearchForm";
 import { Database } from "@/lib/database.types";
 import { useAppDispatch } from "@/store";
 import { useAppSelector } from "@/store/hooks";
-import { addChatMessage, fetchMessages, getNewMessage, postMessage } from "@/store/slices/messageSlice";
+import { fetchMessages, getNewMessage, postMessage, setRead } from "@/store/slices/messageSlice";
 import { addNotification } from "@/store/slices/notificationSlice";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { FaPaperPlane } from "react-icons/fa";
 
 export default function Page(): JSX.Element {
+  const searchParams = useSearchParams();
   const chatData = useAppSelector(state => state.chatMessage);
   const user = useAppSelector(state => state.user);
   const dispatch = useAppDispatch();
-  const [projectId, setProjectId] = useState<number>(0);
+  const [projectId, setProjectId] = useState<number>(parseInt(searchParams.get("project") || "0"));
+  const [search, setSearch] = useState<string>(searchParams.get("search") || "");
+  const [searchDate, setSearchDate] = useState<string>("");
   const supabase = createClientComponentClient<Database>();
   const [content, setContent] = useState<string>("");
 
@@ -58,7 +63,7 @@ export default function Page(): JSX.Element {
         project_id: projectId
       }));
 
-      setContent(prev => "");
+      setContent("");
     }
   }
 
@@ -74,10 +79,10 @@ export default function Page(): JSX.Element {
       user && user.projects &&
       <select
         id="project-list"
-        className="p-2 rounded bg-slate-50 border-slate-950 border-[2px] border-solid mb-3"
+        className="p-2 rounded bg-slate-50 border-slate-950 border-[3px] border-solid"
         name="project-id"
         onChange={handleChange}
-        defaultValue={0}
+        value={projectId}
       >
         <option value={0}>Chọn dự án</option>
         {user && user?.projects.map(project => {
@@ -86,10 +91,26 @@ export default function Page(): JSX.Element {
       </select>
     }
 
+    <SearchForm 
+      deadlineInput={false}
+      search={search}
+      searchDate={searchDate}
+      setSearch={(str : string) => setSearch(str)}
+      setSearchDate={(str : string) => setSearchDate(str)}
+      placeholder="Nội dung tin nhắn"
+    />
     <section className="relative p-2 bg-slate-200 flex flex-col sm:gap-4 gap-2 w-full h-[80vh] rounded">
       <div className="flex flex-col p-2 gap-2 rounded-sm w-full h-[90%] flex-shrink overflow-y-auto custom-sb">
         {chatData.project_id !== 0 && chatData.messages.length > 0 ? chatData.messages.map(message => {
-          if (message.profiles) {
+          if (message.profiles && message.content.includes(search)) {
+
+            if (searchDate) {
+              let searchStr = new Date(searchDate).getFullYear().toString() + "-" + new Date(searchDate).getMonth().toString();
+              let messageDate = new Date(message.created_at).getFullYear().toString() + "-" + new Date(message.created_at).getMonth().toString();
+
+              if (searchStr !== messageDate) return;
+            }
+
             return <ProjectMessageCard
               key={message.message_id}
               content={message.content}
@@ -112,7 +133,11 @@ export default function Page(): JSX.Element {
         <textarea
           id="message"
           name="message"
+          onClick={() => {
+            if (chatData.isNew) dispatch(setRead())
+          }}
           onChange={(e) => {
+            if (chatData.isNew) dispatch(setRead())
             setContent(e.target.value);
           }}
           autoComplete="off"

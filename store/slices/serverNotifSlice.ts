@@ -2,7 +2,7 @@ import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { addNotification } from "./notificationSlice";
 
 export const deleteSN = createAsyncThunk("serverNotif/deleteSN", async (notification_id: number, thunkApi) => {
-  const res = await fetch(`http://localhost:3000/notifications/api?id=${notification_id}`, {
+  const res = await fetch(`${location.origin}/notifications/api?id=${notification_id}`, {
     method: "delete"
   });
 
@@ -20,7 +20,7 @@ export const deleteSN = createAsyncThunk("serverNotif/deleteSN", async (notifica
 });
 
 export const fetchSN = createAsyncThunk("serverNotif/fetchSN", async (_: number = 0, thunkApi) => {
-  const res = await fetch(`http://localhost:3000/notifications/api`, {
+  const res = await fetch(`${location.origin}/notifications/api`, {
     method: "get"
   });
 

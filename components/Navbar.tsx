@@ -31,7 +31,7 @@ export default function Navbar(): JSX.Element {
         {user ?
           <div className="flex flex-row gap-2 items-center">
             <SmallUserAvatar url={user.avatar_url!} />
-            <p className="text-slate-200 font-title font-bold">{user.username}</p>
+            <a href={`/profile/${user.profile_id}`} className="text-slate-200 font-title font-bold hover:text-primary">{user.username}</a>
             <button onClick={handleSignOut} className="text-slate-200 hover:text-primary">
               <FaSignOutAlt className=" sm:text-xl text-base"/>
             </button>

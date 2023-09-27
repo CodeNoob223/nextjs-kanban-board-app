@@ -32,3 +32,19 @@ export async function DELETE(request: Request) {
   if (error) console.log(error);
   return NextResponse.json({ id: data?.notification_id, error: error?.message || "" });
 };
+
+export async function POST(request: Request) {
+  const { title, inviteContent, profile_id } = await request.json();
+
+  const supabase = createRouteHandlerClient<Database>({ cookies });
+
+  const { error } = await supabase.from("notifications")
+  .insert({
+    content: inviteContent,
+    title,
+    profile_id
+  });
+
+  if (error) console.log(error);
+  return NextResponse.json({ id: 0, error: error?.message || "" });
+};

@@ -3,11 +3,12 @@ import { addNotification } from "./notificationSlice";
 
 type messageSliceState = {
   project_id: number,
+  isNew: boolean,
   messages: ChatMessage[]
 };
 
 export const getNewMessage = createAsyncThunk("chatMessage/getNewMessage", async (message_id: number, thunkApi) => {
-  const res = await fetch(`http://localhost:3000/messages/api?message=${message_id}`, {
+  const res = await fetch(`${location.origin}/messages/api?message=${message_id}`, {
     method: "get"
   });
 
@@ -25,7 +26,7 @@ export const getNewMessage = createAsyncThunk("chatMessage/getNewMessage", async
 });
 
 export const fetchMessages = createAsyncThunk("chatMessage/fetchMessages", async (project_id: number, thunkApi) => {
-  const res = await fetch(`http://localhost:3000/messages/api?project=${project_id}`, {
+  const res = await fetch(`${location.origin}/messages/api?project=${project_id}`, {
     method: "get"
   });
 
@@ -49,7 +50,7 @@ export const postMessage = createAsyncThunk("chatMessage/postMessage", async (ta
   content: string,
   project_id: number
 }, thunkApi) => {
-  const res = await fetch(`http://localhost:3000/messages/api`, {
+  const res = await fetch(`${location.origin}/messages/api`, {
     method: "post",
     body: JSON.stringify(target)
   });
@@ -72,6 +73,7 @@ const messageSlice = createSlice({
   name: "chatMessage",
   initialState: {
     project_id: 0,
+    isNew: false,
     messages: []
   } as messageSliceState,
   reducers: {
@@ -80,11 +82,26 @@ const messageSlice = createSlice({
         ...state,
         messages: [...state.messages, action.payload]
       }
+    },
+    setNew: (state: messageSliceState) => {
+      if (!state.isNew)
+      return {
+        ...state,
+        isNew: true
+      }
+    },
+    setRead: (state: messageSliceState) => {
+      if (state.isNew)
+      return {
+        ...state,
+        isNew: false
+      }
     }
   },
   extraReducers(builder) {
     builder.addCase(fetchMessages.fulfilled, (state: messageSliceState, action: PayloadAction<messageSliceState>) => {
       return {
+        ...state,
         project_id: action.payload.project_id,
         messages: action.payload.messages
       }
@@ -100,4 +117,4 @@ const messageSlice = createSlice({
 });
 
 export default messageSlice.reducer;
-export const { addChatMessage } = messageSlice.actions;
+export const { addChatMessage, setNew, setRead } = messageSlice.actions;

@@ -9,7 +9,16 @@ export async function GET(request: Request) {
 
   const supabase = createRouteHandlerClient<Database>({ cookies });
 
-  const { data, error } = await supabase.from("profiles").select().eq('profile_id',profile_id).single();
+  const { data, error } = await supabase.from("profiles").select(
+    `
+      *,
+      completed_tasks:tasks(task_id),
+      projects_joined:profile_project(id),
+      reports_written:reports(report_id)
+    `
+  ).eq('profile_id',profile_id)
+  .eq('tasks.status', "Done")
+  .single();
 
   if (error) console.log(error);
   return NextResponse.json({ data: data, error: error?.message || "" });

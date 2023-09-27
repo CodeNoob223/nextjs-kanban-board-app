@@ -9,7 +9,7 @@ import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { useEffect, useState } from "react";
 import { FaUser, FaUsers, FaPlus, FaBell } from "react-icons/fa";
 
-export default function Home() {
+export default function Page() {
   const user = useAppSelector(state => state.user);
 
   return (
@@ -46,6 +46,7 @@ function Todos() {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const supabase = createClientComponentClient<Database>();
   const dispatch = useAppDispatch();
+  const todos = useAppSelector(state => state.todos);
 
   const user = useAppSelector(state => state.user);
   useEffect(() => {
@@ -66,7 +67,7 @@ function Todos() {
   } else {
     return <div className="sm:p-5 p-2 flex flex-col gap-4 w-full">
       <NewTask />
-      <TaskList />
+      <TaskList todos={todos}/>
     </div>
   }
 }

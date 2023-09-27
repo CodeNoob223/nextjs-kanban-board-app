@@ -1,22 +1,22 @@
 import { configureStore } from "@reduxjs/toolkit";
 import userReducer from "./slices/userDataSlice";
-import searchReducer from "./slices/searchSlice";
 import notificationSlice from "./slices/notificationSlice";
 import todoSlice from "./slices/todoSlice";
 import { useDispatch } from "react-redux";
 import projectSlice from "./slices/projectSlice";
 import serverNotifSlice from "./slices/serverNotifSlice";
 import messageSlice from "./slices/messageSlice";
+import reportSlice from "./slices/reportSlice";
 
 export const store = configureStore({
   reducer: {
-    search: searchReducer,
     user: userReducer,
     notification: notificationSlice,
     todos: todoSlice,
     project: projectSlice,
     serverNotif: serverNotifSlice,
-    chatMessage: messageSlice
+    chatMessage: messageSlice,
+    reports: reportSlice
   }
 });
 

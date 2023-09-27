@@ -11,7 +11,7 @@ export const toUpperFirst = (str: string): string => {
 }
 
 export const fetchTodos = createAsyncThunk("todos/fetchTodos", async (limit: number, thunkApi) => {
-  const res = await fetch(`http://localhost:3000/todos/api?limit=${limit}`, {
+  const res = await fetch(`${location.origin}/todos/api?limit=${limit}`, {
     method: "GET"
   });
 
@@ -31,7 +31,7 @@ export const postTodo = createAsyncThunk("todos/postTodo", async (newTodo: {
   content: string,
   deadline: string
 }, thunkApi) => {
-  const res = await fetch(`http://localhost:3000/todos/api`, {
+  const res = await fetch(`${location.origin}/todos/api`, {
     method: "post",
     body: JSON.stringify({
       content: newTodo.content,
@@ -76,7 +76,7 @@ export const putTodo = createAsyncThunk("todos/putTodo", async (newTodo: {
   toIndex: number,
   progress: string
 }, thunkApi) => {
-  const res = await fetch(`http://localhost:3000/todos/api`, {
+  const res = await fetch(`${location.origin}/todos/api`, {
     method: "PUT",
     body: JSON.stringify(newTodo)
   });
@@ -125,7 +125,7 @@ export const deleteTodos = createAsyncThunk("todos/deleteTodos", async (
     status: Task["status"]
   }, thunkApi
 ) => {
-  const res = await fetch(`http://localhost:3000/todos/api?id=${target.id}`, {
+  const res = await fetch(`${location.origin}/todos/api?id=${target.id}`, {
     method: "delete"
   });
 

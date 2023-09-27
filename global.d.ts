@@ -9,7 +9,14 @@ declare global {
     data: berry[]
   }
 
-  type ForeignUser = Database["public"]["Tables"]["profiles"]["Row"];
+  interface ForeignUser extends Database["public"]["Tables"]["profiles"]["Row"] {
+    username: string,
+    full_name: string,
+    avatar_url: string,
+    completed_tasks: number[],
+    projects_joined: number[],
+    reports_written: number[]
+  };
 
   interface AppNotification {
     id: string,
@@ -29,11 +36,13 @@ declare global {
     project_id: number | null,
     project_data?: Project,
     progress: number,
-    workers: {profiles: {
-      profile_id: string,
-      username: string,
-      avatar_url: string
-    }}[]
+    workers: {
+      profiles: {
+        profile_id: string,
+        username: string,
+        avatar_url: string
+      }
+    }[]
   }
 
   type GetSupaBaseResSingle<T> = {
@@ -56,7 +65,29 @@ declare global {
   type DeleteSupaBaseRes = {
     id: number | string,
     error: string
-  } 
+  }
+
+  interface ProjectReport {
+    report_id: number,
+    created_at: string,
+    profiles: {
+      profile_id: string,
+      username: string,
+      full_name: string,
+      avatar_url: string
+    },
+    content: string,
+    title: string,
+    projects: {
+      project_id: number,
+      project_name: string,
+      team_lead: {
+        profile_id: string,
+        username: string,
+        avatar_url: string
+      }
+    }
+  }
 
   interface ChatMessage {
     message_id: number,
@@ -91,7 +122,7 @@ declare global {
       username: string,
       avatar_url: string
     },
-    created_at:string,
+    created_at: string,
     joined_date: string,
     description: string,
     tasks: Task[],

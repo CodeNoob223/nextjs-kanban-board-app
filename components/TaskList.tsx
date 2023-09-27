@@ -2,18 +2,22 @@
 
 import { DragDropContext, DropResult } from "@hello-pangea/dnd";
 import { useEffect, useState } from "react";
-import { useAppSelector, useAppDispatch } from "@/store/hooks";
+import { useAppDispatch } from "@/store/hooks";
 import { toUpperFirst, updateTodos } from "@/store/slices/todoSlice";
 import { addNotification } from "@/store/slices/notificationSlice";
 import ToDoCol from "./TaskCol";
+import SearchForm from "./SearchForm";
 
-export default function ToDosList() {
-  const todos = useAppSelector(state => state.todos);
+export default function ToDosList({ todos }: { todos: Task[] }) {
   const dispatch = useAppDispatch();
 
   const [pending, setPending] = useState<Task[]>([]);
   const [working, setWorking] = useState<Task[]>([]);
   const [done, setDone] = useState<Task[]>([]);
+
+  const [search, setSearch] = useState<string>("");
+  const [searchDate, setSearchDate] = useState<string>("");
+  const [searchDeadline, setSearchDeadline] = useState<string>("");
 
   useEffect(() => {
     setPending(todos.filter(td => td.status === "Pending"));
@@ -185,7 +189,7 @@ export default function ToDosList() {
       addTask(result.destination.index, destination, newToDo);
     }
 
-    const res = await fetch("http://localhost:3000/todos/api", {
+    const res = await fetch(`${location.origin}/todos/api`, {
       method: "PUT",
       body: JSON.stringify({
         id: parseInt(result.draggableId),
@@ -233,30 +237,101 @@ export default function ToDosList() {
   }
 
   return (
-    <DragDropContext onDragEnd={handleOnDragEnd}>
-      <div className="flex min-[1130px]:flex-row xl:gap-4 min-[400px]:gap-2 gap-10 flex-wrap w-full">
-        <ToDoCol
-          deleteDraggable={deleteDraggable}
-          dropableId="pending"
-          title="Đang chờ"
-          titleColor="text-red-600"
-          todoArr={pending}
-        />
-        <ToDoCol
-          deleteDraggable={deleteDraggable}
-          dropableId="working"
-          title="Đang làm"
-          titleColor="text-blue-600"
-          todoArr={working}
-        />
-        <ToDoCol
-          deleteDraggable={deleteDraggable}
-          dropableId="done"
-          title="Đã xong"
-          titleColor="text-green-600"
-          todoArr={done}
-        />
-      </div>
-    </DragDropContext>
+    <>
+      <SearchForm
+        deadlineStr={searchDeadline}
+        deadlineInput={true}
+        search={search}
+        searchDate={searchDate}
+        setSearch={(str: string) => { setSearch(str) }}
+        setSearchDate={(str: string) => { setSearchDate(str) }}
+        setDeadline={(str: string) => { setSearchDeadline(str) }}
+      />
+      <DragDropContext onDragEnd={handleOnDragEnd}>
+        <div className="flex min-[1130px]:flex-row xl:gap-4 min-[400px]:gap-2 gap-10 flex-wrap w-full">
+          <ToDoCol
+            deleteDraggable={deleteDraggable}
+            dropableId="pending"
+            title="Đang chờ"
+            titleColor="text-red-600"
+            todoArr={pending.filter(td => {
+              if (td) {
+                if (td.content?.includes(search)) {
+                  if (searchDate) {
+                    let searchStr = new Date(searchDate).getFullYear().toString() + "-" + new Date(searchDate).getMonth().toString();
+                    let tdDate = new Date(td.inserted_at).getFullYear().toString() + "-" + new Date(td.inserted_at).getMonth().toString();
+
+                    if (searchStr !== tdDate) return false;
+                  }
+                  if (searchDeadline && td.deadline) {
+                    let deadlineStr = new Date(searchDeadline).getFullYear().toString() + "-" + new Date(searchDeadline).getMonth().toString();
+                    let tdDate = new Date(td.deadline).getFullYear().toString() + "-" + new Date(td.deadline).getMonth().toString();
+
+                    if (deadlineStr !== tdDate) return false;
+                  }
+                  if (searchDeadline && !td.deadline) return false;
+
+                  return true;
+                }
+              }
+            })}
+          />
+          <ToDoCol
+            deleteDraggable={deleteDraggable}
+            dropableId="working"
+            title="Đang làm"
+            titleColor="text-blue-600"
+            todoArr={working.filter(td => {
+              if (td) {
+                if (td.content?.includes(search)) {
+                  if (searchDate) {
+                    let searchStr = new Date(searchDate).getFullYear().toString() + "-" + new Date(searchDate).getMonth().toString();
+                    let tdDate = new Date(td.inserted_at).getFullYear().toString() + "-" + new Date(td.inserted_at).getMonth().toString();
+
+                    if (searchStr !== tdDate) return false;
+                  }
+                  if (searchDeadline && td.deadline) {
+                    let deadlineStr = new Date(searchDeadline).getFullYear().toString() + "-" + new Date(searchDeadline).getMonth().toString();
+                    let tdDate = new Date(td.deadline).getFullYear().toString() + "-" + new Date(td.deadline).getMonth().toString();
+
+                    if (deadlineStr !== tdDate) return false;
+                  }
+                  if (searchDeadline && !td.deadline) return false;
+
+                  return true;
+                }
+              }
+            })}
+          />
+          <ToDoCol
+            deleteDraggable={deleteDraggable}
+            dropableId="done"
+            title="Đã xong"
+            titleColor="text-green-600"
+            todoArr={done.filter(td => {
+              if (td) {
+                if (td.content?.includes(search)) {
+                  if (searchDate) {
+                    let searchStr = new Date(searchDate).getFullYear().toString() + "-" + new Date(searchDate).getMonth().toString();
+                    let tdDate = new Date(td.inserted_at).getFullYear().toString() + "-" + new Date(td.inserted_at).getMonth().toString();
+
+                    if (searchStr !== tdDate) return false;
+                  }
+                  if (searchDeadline && td.deadline) {
+                    let deadlineStr = new Date(searchDeadline).getFullYear().toString() + "-" + new Date(searchDeadline).getMonth().toString();
+                    let tdDate = new Date(td.deadline).getFullYear().toString() + "-" + new Date(td.deadline).getMonth().toString();
+
+                    if (deadlineStr !== tdDate) return false;
+                  }
+                  if (searchDeadline && !td.deadline) return false;
+
+                  return true;
+                }
+              }
+            })}
+          />
+        </div>
+      </DragDropContext>
+    </>
   )
 }

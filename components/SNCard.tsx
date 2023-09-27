@@ -14,8 +14,9 @@ export default function SNCard(props: ServerNotification): JSX.Element {
     }, 500)
   }
 
-  return <article className="p-4 shadow-xl rounded bg-blue-600 text-slate-100 w-full max-w-[600px] flex gap-2 items-center"
+  return <article className="p-4 shadow-xl rounded bg-slate-950 text-slate-100 w-full max-w-[600px] flex gap-2 items-center"
     style={{
+      position: !exit ? "relative" : "absolute",
       transition: "all ease-in 0.5s",
       transform: `translateX(${exit ? "100vw" : "0px"})`
     }}
