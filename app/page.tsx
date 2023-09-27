@@ -2,6 +2,7 @@
 import NewTask from "@/components/NewTask";
 import { Separator, Spinner } from "@/components/Sidebar";
 import TaskList from "@/components/TaskList";
+import { Database } from "@/lib/database.types";
 import { useAppDispatch } from "@/store";
 import { useAppSelector } from "@/store/hooks";
 import { fetchTodos } from "@/store/slices/todoSlice";
