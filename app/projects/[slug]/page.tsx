@@ -2,7 +2,7 @@
 import { MyInput, MyLabel } from "@/components/NewTask";
 import { Spinner } from "@/components/Sidebar";
 import SmallUserCard from "@/components/SmallUserCard";
-import Button from "@/components/buttons/Button";
+import NormalButton from "@/components/buttons/NormalButton";
 import ProjectNewTask from "@/components/projectsComp/ProjectNewTask";
 import ProjectTaskList from "@/components/projectsComp/ProjectTaskList";
 import { Database } from "@/lib/database.types";
@@ -180,8 +180,7 @@ export default function Page({ params }: {
               {
                 userData.profile_id === project.team_lead.profile_id &&
                 <>
-
-                  <Button
+                  <NormalButton
                     handleClick={(e) => {
                       if (confirm("Xóa dự án?!")) {
                         dispatch(deleteOwnProject({
@@ -194,8 +193,8 @@ export default function Page({ params }: {
                     className="flex gap-2 items-center bg-red-600 hover:bg-red-500 text-slate-50"
                   >
                     <FaTrash className="sm:text-lg text-xs" />
-                  </Button>
-                  <Button
+                  </NormalButton>
+                  <NormalButton
                     handleClick={(e) => {
                       setEdit(prev => (
                         {
@@ -209,7 +208,7 @@ export default function Page({ params }: {
                     className="flex gap-2 items-center bg-blue-600 hover:bg-blue-500 text-slate-50"
                   >
                     <FaPen className="sm:text-lg text-xs" />
-                  </Button>
+                  </NormalButton>
                 </>
               }
             </div>

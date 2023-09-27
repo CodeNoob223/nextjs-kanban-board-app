@@ -27,6 +27,7 @@ export default function TaskCol(props: {
             {props.todoArr.map((todo, index) => {
               if (todo)
                 return <TaskCard
+                  workers={[]}
                   selfUnmount={props.deleteDraggable}
                   task_id={todo.task_id}
                   inserted_at={todo.inserted_at}
