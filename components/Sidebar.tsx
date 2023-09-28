@@ -1,6 +1,6 @@
 "use client";
 import { usePathname } from "next/navigation";
-import { FaHome, FaUser, FaUsers, FaPlus, FaBell, FaBars, FaCircleNotch, FaTrashAlt, FaFileInvoice, FaEnvelope } from "react-icons/fa";
+import { FaHome, FaUser, FaUsers, FaPlus, FaBell, FaBars, FaCircleNotch, FaTrashAlt, FaFileInvoice, FaEnvelope, FaInfoCircle } from "react-icons/fa";
 import { FaUserMinus, FaMessage, FaArrowRightFromBracket } from "react-icons/fa6"
 import Link from "next/link";
 import { useState, useEffect } from 'react';
@@ -201,6 +201,20 @@ export default function Sidebar(): JSX.Element {
               className="relative w-full h-[40px] overflow-hidden bg-slate-950 hover:bg-primary rounded flex items-center text-slate-400 hover:text-slate-950">
               <FaFileInvoice className="text-2xl mx-[9px] flex-shrink-0" />
               <p className="font-bold">Báo cáo</p>
+            </Link>
+        }
+        <Separator />
+        {
+          pathname === "/tos" ?
+            <Link href={`/tos`}
+              className="relative w-full h-[40px] overflow-hidden bg-primary rounded flex items-center">
+              <FaInfoCircle className="text-2xl mx-[9px] flex-shrink-0 text-slate-950" />
+              <p className="font-bold">Điều khoản</p>
+            </Link>
+            : <Link href={`/tos`}
+              className="relative w-full h-[40px] overflow-hidden bg-slate-950 hover:bg-primary rounded flex items-center text-slate-400 hover:text-slate-950">
+              <FaInfoCircle className="text-2xl mx-[9px] flex-shrink-0" />
+              <p className="font-bold">Điều khoản</p>
             </Link>
         }
         <Separator />
