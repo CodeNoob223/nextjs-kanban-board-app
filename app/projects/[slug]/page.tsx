@@ -13,8 +13,8 @@ import { deleteOwnProject, fetchNewProjectMember, fetchNewTaskData, fetchProject
 import { filterUserProjectList, putProject } from "@/store/slices/userDataSlice";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { useEffect, useState } from "react";
-import { FaPen, FaSave, FaTrash } from "react-icons/fa";
-import { FaArrowRightFromBracket } from "react-icons/fa6";
+import { FaArrowLeft, FaArrowRight, FaPen, FaSave, FaTrash, FaUsers } from "react-icons/fa";
+import { FaArrowRightFromBracket, FaUser } from "react-icons/fa6";
 
 export default function Page({ params }: {
   params: {
@@ -26,6 +26,7 @@ export default function Page({ params }: {
   const userData = useAppSelector(state => state.user);
   const dispatch = useAppDispatch();
   const supabase = createClientComponentClient<Database>();
+  const [showMembers, setShowMembers] = useState<boolean>(false);
 
   const [edit, setEdit] = useState<{
     show: boolean,
@@ -167,7 +168,7 @@ export default function Page({ params }: {
     if (res.meta.requestStatus === "rejected") console.log(res);
   };
 
-  return <div className="p-4">
+  return <div className="p-4 relative overflow-hidden w-full">
     {
       isLoading ?
         <Spinner />
@@ -213,30 +214,40 @@ export default function Page({ params }: {
               }
             </div>
             <p><span className="font-bold">Mô tả: </span>{project.description || "Không có mô tả"}</p>
-            <div className="flex gap-2 items-center">
-              <p className="font-bold">Manager:</p>
-              <SmallUserCard
-                avatar_url={project.team_lead.avatar_url}
-                profile_id={project.team_lead.profile_id}
-                username={project.team_lead.username}
-              />
-            </div>
+            <div className={`absolute w-max bg-slate-950 text-slate-300 sm:top-4 top-11 sm:right-4 right-2 sm:translate-x-0 ${showMembers ? "" : "translate-x-[190px]"} transition-all duration-75 ease-in-out max-w-[190px] shadow-lg p-3 rounded flex flex-col gap-4`}>
+              <button onClick={() => setShowMembers(prev => !prev)} className="sm:hidden absolute -left-6 bg-inherit p-2 rounded">
+                {showMembers ?
+                  <FaArrowRight />
+                  : <FaUsers className="text-lg text-primary" />
+                }
+              </button>
+              <div className="flex flex-col gap-2">
+                <p className="font-bold">Trưởng:</p>
+                <SmallUserCard
+                  avatar_url={project.team_lead.avatar_url}
+                  profile_id={project.team_lead.profile_id}
+                  username={project.team_lead.username}
+                  className="bg-transparent"
+                />
+              </div>
 
-            <div className="flex gap-2 flex-wrap">
-              <p className="font-bold">Thành viên:</p>
-              {
-                project.project_members.map(member => {
-                  if (member.profiles)
-                    return <SmallUserCard
-                      key={member.profiles.profile_id}
-                      avatar_url={member.profiles.avatar_url}
-                      username={member.profiles.username}
-                      profile_id={member.profiles.profile_id}
-                      kickAble={userData?.profile_id === project.team_lead.profile_id && member.profiles.profile_id !== userData?.profile_id}
-                      project_id={parseInt(params.slug)}
-                    />
-                })
-              }
+              <div className="flex flex-col gap-2">
+                <p className="font-bold">Thành viên:</p>
+                {
+                  project.project_members.map(member => {
+                    if (member.profiles && member.profiles.profile_id !== userData.profile_id)
+                      return <SmallUserCard
+                        key={member.profiles.profile_id}
+                        className="bg-transparent"
+                        avatar_url={member.profiles.avatar_url}
+                        username={member.profiles.username}
+                        profile_id={member.profiles.profile_id}
+                        kickAble={userData?.profile_id === project.team_lead.profile_id && member.profiles.profile_id !== userData?.profile_id}
+                        project_id={parseInt(params.slug)}
+                      />
+                  })
+                }
+              </div>
             </div>
           </div>
           {

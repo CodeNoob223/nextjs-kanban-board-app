@@ -18,7 +18,7 @@ export default function Page() {
       {
         (user !== null) ?
           <Todos />
-          : <main className="p-2">
+          : <main className="p-2 overflow-hidden w-full">
             <h1 className="text-4xl font-bold mb-3">Phần mềm quản lý công việc</h1>
             <Separator />
             <h2 className="text-xl font-medium my-3">Vui lòng đăng nhập trước khi sử dụng</h2>
@@ -68,7 +68,7 @@ function Todos() {
   } else {
     return <div className="sm:p-5 p-2 flex flex-col gap-4 w-full">
       <NewTask />
-      <TaskList todos={todos}/>
+      <TaskList todos={todos} />
     </div>
   }
 }
