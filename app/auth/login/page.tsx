@@ -71,8 +71,6 @@ export default function LoginPage(): JSX.Element {
       }));
       return;
     }
-
-    localStorage.setItem("isAuth", "true");
   }
 
   const githubSignIn = async () => {
@@ -94,8 +92,6 @@ export default function LoginPage(): JSX.Element {
       }));
       return;
     }
-
-    localStorage.setItem("isAuth", "true");
   }
 
   return (
