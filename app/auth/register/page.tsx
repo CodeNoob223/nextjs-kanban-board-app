@@ -179,7 +179,7 @@ export default function RegisterPage(): JSX.Element {
         />
       </div>
 
-      <div className="flex h-max w-full max-w-[400px] mx-auto border-slate-400 border-solid border-2 rounded overflow-hidden mb-2">
+      {/* <div className="flex h-max w-full max-w-[400px] mx-auto border-slate-400 border-solid border-2 rounded overflow-hidden mb-2">
         <div className="flex items-center bg-slate-200 border-r-2 border-slate-400 border-solid py-2 px-3">
           <FaImage className="text-lg" />
         </div>
@@ -193,9 +193,8 @@ export default function RegisterPage(): JSX.Element {
           onChange={(e) => setAvatarUrl(e.target.value)}
           value={avatarUrl}
         />
-      </div>
-
-      {/* <div className="flex h-max w-full max-w-[400px] mx-auto border-slate-400 border-solid border-2 rounded overflow-hidden mb-2">
+      </div> */}
+      <div className="flex h-max w-full max-w-[400px] mx-auto border-slate-400 border-solid border-2 rounded overflow-hidden mb-2">
         <div className="flex items-center bg-slate-200 border-r-2 border-slate-400 border-solid py-2 px-3">
           <FaPhoneSquareAlt className="text-lg" />
         </div>
@@ -209,7 +208,7 @@ export default function RegisterPage(): JSX.Element {
           onChange={(e) => setPhone(e.target.value)}
           value={phone}
         />
-      </div> */}
+      </div>
       <button type="button" onClick={handleSignUp} className="py-2 max-w-[400px] mx-auto px-4 bg-slate-950 hover:bg-primary hover:text-slate-950 transition-colors duration-200 rounded overflow-hidden w-full text-slate-100">
         <div className="flex gap-2 items-center w-max mx-auto">
           <FaEnvelope /> Đăng ký

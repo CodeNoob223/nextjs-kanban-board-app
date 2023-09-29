@@ -1,3 +1,10 @@
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Điều khoản & Dịch vụ',
+  description: 'Điều khoản và dịch vụ',
+}
+
 export default function Page(): JSX.Element {
   return <div className="sm:p-4 p-2 flex sm:flex-row flex-col gap-4">
     <section className="flex flex-col gap-2">

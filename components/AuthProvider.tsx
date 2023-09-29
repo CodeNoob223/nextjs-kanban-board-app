@@ -17,16 +17,15 @@ export const AuthProvider = ({ children }: {
     const getUserData = async () => {
       const {data, error} = await supabase.auth.getSession();
 
-      if (error) {
-        console.log(error);
+      if (error || data.session === null) {
+        console.log("Session error");
+        if (error) console.log(error);
         setLoading(false);
         return;
       }
 
-      console.log(data);
-
       if (data.session?.user) {
-        const userData = await supabase.from("profiles").select().eq("profile_id", data.session.user.id);
+        const userData = await supabase.from("profiles").select().eq("profile_id", data.session.user.id).single();
         if (userData.error) {
           console.log(userData.error);
           return;
@@ -35,7 +34,7 @@ export const AuthProvider = ({ children }: {
         if (userData.data) {
           store.dispatch(signIn({
             ...data.session.user,
-            ...userData.data[0],
+            ...userData.data,
             projects: []
           }));
         }
@@ -49,11 +48,11 @@ export const AuthProvider = ({ children }: {
     const { data: listener } = supabase.auth.onAuthStateChange(
       async (event, session) => {
         if (session?.user) {
-          const userData = await supabase.from("profiles").select().eq("profile_id", session.user.id);
+          const userData = await supabase.from("profiles").select().eq("profile_id", session.user.id).single();
           if (userData.data) {
             store.dispatch(signIn({
               ...session.user,
-              ...userData.data[0],
+              ...userData.data,
               projects: []
             }));
           }
