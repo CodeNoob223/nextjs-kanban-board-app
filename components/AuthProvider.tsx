@@ -23,6 +23,8 @@ export const AuthProvider = ({ children }: {
         return;
       }
 
+      console.log(data);
+
       if (data.session?.user) {
         const userData = await supabase.from("profiles").select().eq("profile_id", data.session.user.id);
         if (userData.error) {

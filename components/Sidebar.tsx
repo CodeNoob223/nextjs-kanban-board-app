@@ -35,10 +35,13 @@ export default function Sidebar(): JSX.Element {
     const getProjects = async () => {
       const { data: { session } } = await supabase.auth.getSession();
 
-      if (session) {
+      if (session?.user) {
         const data = await dispatch(fetchProjects(10)); // 10 is limit number
 
-        if (data.meta.requestStatus === "rejected") return;
+        if (data.meta.requestStatus === "rejected") {
+          console.log(data);
+          return
+        };
 
       }
       setIsLoading(false);

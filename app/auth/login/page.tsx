@@ -39,7 +39,6 @@ export default function LoginPage(): JSX.Element {
     });
 
     if (error) {
-      localStorage.clear();
       dispatch(addNotification({
         content: error.message!,
         type: "error",
@@ -64,7 +63,6 @@ export default function LoginPage(): JSX.Element {
     });
 
     if (error) {
-      localStorage.clear();
       dispatch(addNotification({
         content: error.message!,
         type: "error",
@@ -85,7 +83,6 @@ export default function LoginPage(): JSX.Element {
     });
 
     if (error) {
-      localStorage.clear();
       dispatch(addNotification({
         content: error.message!,
         type: "error",

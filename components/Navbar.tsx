@@ -13,7 +13,10 @@ export default function Navbar(): JSX.Element {
   const handleSignOut = async () => {
     const supabase = createClientComponentClient();
     await supabase.auth.signOut();
-    window.location.replace("/");
+
+    setTimeout(() => {
+      window.location.replace("/");
+    }, 300)
   }
 
   if (pathname === "/auth/login" || pathname === "/auth/register") {
