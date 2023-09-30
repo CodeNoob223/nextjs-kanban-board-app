@@ -231,7 +231,7 @@ export default function Page({ params }: {
                 }
               </button>
               <div className="flex flex-col gap-2">
-                <p className="font-bold">Trưởng:</p>
+                <p className="font-bold">Trưởng dự án:</p>
                 <SmallUserCard
                   avatar_url={project.team_lead.avatar_url}
                   profile_id={project.team_lead.profile_id}

@@ -1,6 +1,6 @@
 "use client";
 import NewTask from "@/components/NewTask";
-import { Separator, Spinner } from "@/components/Sidebar";
+import { Spinner } from "@/components/Sidebar";
 import TaskList from "@/components/TaskList";
 import { Database } from "@/lib/database.types";
 import { useAppDispatch } from "@/store";
@@ -20,9 +20,9 @@ export default function Page() {
           <Todos />
           : <main className="p-2 overflow-hidden w-full">
             <h1 className="text-4xl font-bold mb-3">Phần mềm quản lý công việc</h1>
-            <Separator />
+            
             <h2 className="text-xl font-medium my-3">Vui lòng đăng nhập trước khi sử dụng</h2>
-            <Separator />
+            
             <section className="flex flex-col gap-3 text-lg mt-3">
               <p>
                 Nhấn vào <FaUser className="inline bg-primary" /> để xem công việc cá nhân

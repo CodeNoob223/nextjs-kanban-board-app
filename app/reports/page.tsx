@@ -218,8 +218,8 @@ export default function Page(): JSX.Element {
           allow: true,
           flag: "post"
         })
-      }} className="flex items-center gap-2 text-slate-50 p-2 bg-green-500 hover:bg-green-400 rounded sm:mx-2 mx-1">
-        <p>Thêm</p>
+      }} className="flex items-center flex-wrap gap-2 text-slate-50 p-2 bg-green-500 hover:bg-green-400 rounded sm:mx-2 mx-1">
+        <p className="sm:block hidden">Thêm</p>
         <FaPlus className="text-xl flex-shrink-0" />
       </button>
     </div>
@@ -228,7 +228,7 @@ export default function Page(): JSX.Element {
       <form onSubmit={e => {
         e.preventDefault();
       }}
-        className="relative flex flex-col flex-shrink-0 bg-slate-50 gap-2 sm:px-10 sm:py-20 py-6 px-2  sm:w-[600px] w-[80vw] shadow-xl border-[2px] border-solid border-slate-300"
+        className="relative flex flex-col flex-shrink-0 bg-slate-50 gap-2 sm:px-10 py-20 px-2  sm:w-[600px] w-[80vw] shadow-xl border-[2px] border-solid border-slate-300"
       >
         {reportId > 0 && <p className="absolute w-max rounded top-6 p-2 sm:text-sm text-xs bg-slate-950 text-primary">Mã: {reportId}</p>}
         {edit.allow && edit.flag === "post" ?
