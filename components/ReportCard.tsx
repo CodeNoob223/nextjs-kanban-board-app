@@ -3,7 +3,7 @@
 import { FaEdit, FaEye, FaTrash } from "react-icons/fa";
 import SmallUserAvatar from "./SmallUserAvatar";
 
-interface ProjectCardTypes extends ProjectReport {
+interface ReportCardTypes extends ProjectReport {
   handleView: (title: string, content: string, created_at: string, receiver: {
     username: string,
     profile_id: string
@@ -28,7 +28,7 @@ interface ProjectCardTypes extends ProjectReport {
   user_profile_id: string
 }
 
-export default function ProjectCard(props: ProjectCardTypes): JSX.Element {
+export default function ReportCard(props: ReportCardTypes): JSX.Element {
 
   return <article className="bg-slate-100 shadow-lg rounded p-4 flex items-center">
     <div className="mr-auto">
@@ -36,7 +36,7 @@ export default function ProjectCard(props: ProjectCardTypes): JSX.Element {
       <div className="flex flex-col gap-1">
         <div className="flex gap-2 text-sm">
           <p className="font-bold flex-shrink-0">Thời gian:</p>
-          <p>{new Date(props.created_at).toLocaleDateString()}</p>
+          <p>{new Date(props.created_at).toUTCString()}</p>
         </div>
         <div className="flex gap-2 text-sm">
           <p className="font-bold flex-shrink-0">Người gửi:</p>

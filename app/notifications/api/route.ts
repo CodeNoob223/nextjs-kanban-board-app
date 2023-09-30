@@ -6,7 +6,11 @@ import { NextResponse } from "next/server";
 export async function GET(request: Request) {
   const supabase = createRouteHandlerClient<Database>({ cookies });
 
-  const { data, error } = await supabase.from("notifications").select();
+  const { data, error } = await supabase.from("notifications")
+  .select()
+  .order('created_at', {
+    ascending: false
+  });
 
   if (error) console.log(error);
   return NextResponse.json({ data: data, error: error?.message || "" });

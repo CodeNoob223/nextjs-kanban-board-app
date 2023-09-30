@@ -91,7 +91,8 @@ export async function PUT(request: Request) {
   const { data, error } = await supabase.from("reports")
     .update({
       content,
-      title
+      title,
+      created_at: new Date(Date.now()).toISOString()
     })
     .eq('report_id', report_id)
     .select(`

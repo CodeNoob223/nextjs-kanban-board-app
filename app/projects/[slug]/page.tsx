@@ -243,8 +243,9 @@ export default function Page({ params }: {
               <div className="flex flex-col gap-2">
                 <p className="font-bold">Thành viên:</p>
                 {
+                  project.project_members.length > 1 ?
                   project.project_members.map(member => {
-                    if (member.profiles && member.profiles.profile_id !== userData.profile_id)
+                    if (member.profiles && member.profiles.profile_id !== project.team_lead.profile_id)
                       return <SmallUserCard
                         key={member.profiles.profile_id}
                         className="bg-transparent"
@@ -254,7 +255,7 @@ export default function Page({ params }: {
                         kickAble={userData?.profile_id === project.team_lead.profile_id && member.profiles.profile_id !== userData?.profile_id}
                         project_id={parseInt(params.slug)}
                       />
-                  })
+                  }) : <p>Chưa có thành viên</p>
                 }
               </div>
             </div>

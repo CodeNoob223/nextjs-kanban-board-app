@@ -14,7 +14,7 @@ export default function SNCard(props: ServerNotification): JSX.Element {
     }, 500)
   }
 
-  return <article className="p-4 shadow-xl rounded bg-slate-950 text-slate-100 w-full max-w-[600px] flex gap-2 items-center"
+  return <article className="p-4 shadow-lg rounded w-full max-w-[600px] flex gap-2 items-center"
     style={{
       position: !exit ? "relative" : "absolute",
       transition: "all ease-in 0.5s",
@@ -33,7 +33,7 @@ export default function SNCard(props: ServerNotification): JSX.Element {
     </div>
     <div
       onClick={markNotif} 
-      className="p-2 cursor-pointer text-primary hover:bg-primary hover:text-slate-950 rounded">
+      className="p-2 cursor-pointer text-green-600 hover:bg-green-600 hover:text-slate-950 rounded">
       <FaCheck />
     </div>
   </article>

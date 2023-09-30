@@ -1,6 +1,6 @@
 "use client";
 import { MyLabel } from "@/components/NewTask";
-import ProjectCard from "@/components/ProjectCard";
+import ReportCard from "@/components/ReportCard";
 import SearchForm from "@/components/SearchForm";
 import { Database } from "@/lib/database.types";
 import { useAppDispatch } from "@/store";
@@ -309,38 +309,39 @@ export default function Page(): JSX.Element {
         }
       </form>
       <div className="h-[80vh] sm:w-[40%] w-full bg-slate-200 sm:p-4 p-2 flex-shrink rounded flex flex-col gap-2 overflow-hidden overflow-y-auto custom-sb">
-        <SearchForm 
+        <SearchForm
           placeholder="Tiêu đề"
           deadlineInput={false}
           search={search}
           searchDate={searchDate}
-          setSearch={(str : string) => setSearch(str)}
-          setSearchDate={(str : string) => setSearchDate(str)}
+          setSearch={(str: string) => setSearch(str)}
+          setSearchDate={(str: string) => setSearchDate(str)}
         />
         {
           user && reportData.reports && reportData.reports.map((report, index) => {
-            if (report.profiles && report.projects && report.title.includes(search))
+            if (report.profiles && report.projects && report.title.includes(search)) {
               if (searchDate) {
                 let searchStr = new Date(searchDate).getFullYear().toString() + "-" + new Date(searchDate).getMonth().toString();
                 let reportDate = new Date(report.created_at).getFullYear().toString() + "-" + new Date(report.created_at).getMonth().toString();
 
                 if (searchStr !== reportDate) return;
               }
-            return <ProjectCard
-              content={report.content}
-              created_at={report.created_at}
-              handleView={handleClick}
-              user_profile_id={user.profile_id}
-              handleDelete={() => {
-                removeReport(report.report_id)
-              }}
-              handleEdit={handleClick}
-              profiles={report.profiles}
-              projects={report.projects}
-              report_id={report.report_id}
-              title={report.title}
-              key={report.report_id}
-            />
+              return <ReportCard
+                content={report.content}
+                created_at={report.created_at}
+                handleView={handleClick}
+                user_profile_id={user.profile_id}
+                handleDelete={() => {
+                  removeReport(report.report_id)
+                }}
+                handleEdit={handleClick}
+                profiles={report.profiles}
+                projects={report.projects}
+                report_id={report.report_id}
+                title={report.title}
+                key={report.report_id}
+              />
+            }
           })
         }
       </div>

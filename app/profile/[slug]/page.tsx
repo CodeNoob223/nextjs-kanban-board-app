@@ -7,7 +7,7 @@ import { useAppSelector } from '@/store/hooks';
 import { addNotification } from '@/store/slices/notificationSlice';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { useState, useEffect } from 'react'
-import { FaPlus, FaUserMinus } from 'react-icons/fa';
+import { FaLock, FaPlus } from 'react-icons/fa';
 import { FaArrowRightFromBracket } from 'react-icons/fa6';
 
 export default function Page({ params }: {
@@ -23,6 +23,8 @@ export default function Page({ params }: {
   const [avatar_url, setAvatarUrl] = useState<string>("");
   const [popUp, setPopUp] = useState<boolean>(false);
   const [inviteContent, setInviteContent] = useState<string>("");
+  const [newPassword, setNewPassword] = useState<string>("");
+
   const [projectData, setProjectData] = useState<{
     project_id: number,
     project_name: string
@@ -140,13 +142,128 @@ export default function Page({ params }: {
     }
   }, [projectData, userData])
 
+  const updatePassword = async () => {
+    if (confirm("Xác nhận đổi mật khẩu?")) {
+      const { error } = await supabase.auth.updateUser({
+        password: newPassword
+      });
+
+      if (error) {
+        console.log(error);
+        dispatch(addNotification({
+          content: "Có lỗi khi đổi mật khẩu",
+          type: "error"
+        }));
+
+        return;
+      }
+
+      dispatch(addNotification({
+        content: "Đổi mật khẩu thành công",
+        type: "success"
+      }));
+
+      setNewPassword("");
+    }
+  }
+
   return (
-    <form onSubmit={(e) => {
-      e.preventDefault()
-      updateProfile(e);
-    }}
-      className="sm:p-4 p-1 flex gap-2 flex-wrap"
-    >
+    <div className='flex flex-col gap-2 p-1'>
+      <form onSubmit={(e) => {
+        e.preventDefault()
+        updateProfile(e);
+      }}
+        className="sm:p-4 p-1 flex gap-2 flex-wrap"
+      >
+        {userData?.profile_id === params.slug ?
+          <Avatar
+            size={200}
+            url={avatar_url}
+            onUpload={updateProfile}
+            className='w-max rounded border-[3px] border-slate-950 border-solid flex-shrink-0'
+          /> : <div className='w-[200px] h-[200px] rounded border-[3px] border-slate-950 border-solid flex-shrink-0'
+            style={{
+              backgroundImage: `url(${avatar_url})`,
+              backgroundRepeat: "no-repeat",
+              backgroundSize: "cover",
+              backgroundPosition: "center"
+            }}></div>
+        }
+
+        <section className='bg-slate-100 shadow-lg p-2 flex gap-3 flex-col flex-shrink-0'>
+          {userData?.profile_id === params.slug && <div className='flex gap-2 sm:flex-row flex-col items-center'>
+            <MyLabel
+              for='email'
+              content='Email '
+            />
+            <MyInput
+              id="email"
+              name='email'
+              type="text"
+              value={userData.email}
+              onChange={() => { }}
+              readOnly={true}
+            />
+          </div>}
+          <div className='flex gap-2 sm:flex-row flex-col items-center'>
+            <MyLabel
+              for='full_name'
+              content='Họ & tên '
+            />
+            <MyInput
+              id="full_name"
+              name='full_name'
+              type="text"
+              value={full_name || ''}
+              onChange={(e) => setFull_name(e.target.value)}
+              disabled={userData?.profile_id !== params.slug}
+            />
+          </div>
+
+          <div className='flex gap-2 sm:flex-row flex-col items-center'>
+            <MyLabel
+              for='username'
+              content='Biệt danh: '
+            />
+            <MyInput
+              id='username'
+              name='username'
+              type='text'
+              value={username || ''}
+              onChange={(e) => setUsername(e.target.value)}
+              disabled={userData?.profile_id !== params.slug}
+            />
+          </div>
+
+          {userData?.profile_id === params.slug ?
+            <button className="p-2 bg-primary text-slate-950 rounded font-bold" type="submit" disabled={loading}>
+              {loading ? 'Đang tải ...' : 'Cập nhật'}
+            </button> :
+            <button type="button" onClick={() => { setPopUp(true) }} className="p-2 bg-primary text-slate-950 rounded font-bold" disabled={loading}>
+              Mời tham gia
+            </button>
+          }
+        </section>
+
+        <section className='flex gap-2 flex-shrink-0 mt-10'>
+          <article className='p-4 w-[25vw] min-w-[80px] rounded flex flex-col gap-3 text-center shadow-lg items-center flex-shrink-0'>
+            <h1 className='font-bold lg:text-3xl sm:text-2xl text-xl text-green-600'>Đã xong</h1>
+            <p className='lg:text-2xl sm:text-lg text-blue-600'>{stats.completed_tasks}</p>
+            <p className='lg:text-2xl sm:text-lg font-bold'>Công việc</p>
+          </article>
+          <article className='p-4 w-[25vw] min-w-[80px] rounded flex flex-col gap-3 text-center shadow-lg items-center flex-shrink-0'>
+            <h1 className='font-bold lg:text-3xl sm:text-2xl text-xl text-green-600'>Tham gia</h1>
+            <p className='lg:text-2xl sm:text-lg text-blue-600'>{stats.projects_joined}</p>
+            <p className='lg:text-2xl sm:text-lg font-bold'>Dự án</p>
+          </article>
+          <article className='p-4 w-[25vw] min-w-[80px] rounded flex flex-col gap-3 text-center shadow-lg items-center flex-shrink-0'>
+            <h1 className='font-bold lg:text-3xl sm:text-2xl text-xl text-green-600'>Đã viết</h1>
+            <p className='lg:text-2xl sm:text-lg text-blue-600'>{stats.reports_written}</p>
+            <p className='lg:text-2xl sm:text-lg font-bold'>Báo cáo</p>
+          </article>
+        </section>
+      </form>
+
       {
         (popUp && userData) &&
         <section className="fixed z-20 top-0 left-0 w-[100vw] h-[100vh] bg-slate-950/[.5]"
@@ -158,7 +275,7 @@ export default function Page({ params }: {
             });
           }}
         >
-          <article className="absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] sm:w-full w-[90vw] max-w-[400px] sm:p-10 p-4 flex flex-col gap-3 bg-slate-100 shadow-xl rounded-md"
+          <form className="absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] sm:w-full w-[90vw] max-w-[400px] sm:p-10 p-4 flex flex-col gap-3 bg-slate-100 shadow-xl rounded-md"
             onKeyDown={(e) => {
               if (e.key === "Escape") {
                 setPopUp(false);
@@ -238,95 +355,35 @@ export default function Page({ params }: {
                 <FaArrowRightFromBracket /> Quay lại
               </div>
             </button>
-          </article>
-        </section>}
-      {userData?.profile_id === params.slug ?
-        <Avatar
-          size={200}
-          url={avatar_url}
-          onUpload={updateProfile}
-          className='w-max rounded border-[3px] border-slate-950 border-solid flex-shrink-0'
-        /> : <div className='w-[200px] h-[200px] rounded border-[3px] border-slate-950 border-solid flex-shrink-0'
-          style={{
-            backgroundImage: `url(${avatar_url})`,
-            backgroundRepeat: "no-repeat",
-            backgroundSize: "cover",
-            backgroundPosition: "center"
-          }}></div>
+          </form>
+        </section>
       }
-
-      <section className='bg-slate-100 shadow-lg p-2 flex gap-3 flex-col flex-shrink-0'>
-        {userData?.profile_id === params.slug && <div className='flex gap-2 sm:flex-row flex-col items-center'>
-          <MyLabel
-            for='email'
-            content='Email '
-          />
-          <MyInput
-            id="email"
-            name='email'
-            type="text"
-            value={userData.email}
-            onChange={() => { }}
-            readOnly={true}
-          />
-        </div>}
-        <div className='flex gap-2 sm:flex-row flex-col items-center'>
-          <MyLabel
-            for='full_name'
-            content='Họ & tên '
-          />
-          <MyInput
-            id="full_name"
-            name='full_name'
-            type="text"
-            value={full_name || ''}
-            onChange={(e) => setFull_name(e.target.value)}
-            disabled={userData?.profile_id !== params.slug}
-          />
-        </div>
-
-        <div className='flex gap-2 sm:flex-row flex-col items-center'>
-          <MyLabel
-            for='username'
-            content='Biệt danh: '
-          />
-          <MyInput
-            id='username'
-            name='username'
-            type='text'
-            value={username || ''}
-            onChange={(e) => setUsername(e.target.value)}
-            disabled={userData?.profile_id !== params.slug}
-          />
-        </div>
-
-        {userData?.profile_id === params.slug ?
-          <button className="p-2 bg-primary text-slate-950 rounded font-bold" type="submit" disabled={loading}>
-            {loading ? 'Đang tải ...' : 'Cập nhật'}
-          </button> :
-          <button type="button" onClick={() => {setPopUp(true)}} className="p-2 bg-primary text-slate-950 rounded font-bold" disabled={loading}>
-            Mời tham gia
+      {userData?.profile_id === params.slug &&
+        <form className="sm:p-4 p-1 flex flex-col gap-2 shadow-xl w-max">
+          <div onSubmit={(e) => {
+            e.preventDefault();
+            updatePassword();
+          }} className='flex gap-2 sm:flex-row flex-col items-center'>
+            <MyLabel
+              for='new_password'
+              content='Mật khẩu mới: '
+            />
+            <MyInput
+              id="new_password"
+              name='new_password'
+              type="password"
+              value={newPassword}
+              onChange={(e) => { setNewPassword(e.target.value) }}
+            />
+          </div>
+          <button type='submit'
+            className="py-2 max-w-[400px] mx-auto px-4 bg-orange-600 hover:bg-orange-500 transition-colors duration-200 rounded overflow-hidden w-full text-slate-100">
+            <div className="flex gap-2 items-center w-max mx-auto">
+              <FaLock /> Đổi mật khẩu
+            </div>
           </button>
-        }
-      </section>
-
-      <section className='flex gap-2 flex-shrink-0 mt-10'>
-        <article className='p-4 w-[25vw] min-w-[80px] rounded flex flex-col gap-3 text-center shadow-lg items-center flex-shrink-0'>
-          <h1 className='font-bold lg:text-3xl sm:text-2xl text-xl text-green-600'>Đã xong</h1>
-          <p className='lg:text-2xl sm:text-lg text-blue-600'>{stats.completed_tasks}</p>
-          <p className='lg:text-2xl sm:text-lg font-bold'>Công việc</p>
-        </article>
-        <article className='p-4 w-[25vw] min-w-[80px] rounded flex flex-col gap-3 text-center shadow-lg items-center flex-shrink-0'>
-          <h1 className='font-bold lg:text-3xl sm:text-2xl text-xl text-green-600'>Tham gia</h1>
-          <p className='lg:text-2xl sm:text-lg text-blue-600'>{stats.projects_joined}</p>
-          <p className='lg:text-2xl sm:text-lg font-bold'>Dự án</p>
-        </article>
-        <article className='p-4 w-[25vw] min-w-[80px] rounded flex flex-col gap-3 text-center shadow-lg items-center flex-shrink-0'>
-          <h1 className='font-bold lg:text-3xl sm:text-2xl text-xl text-green-600'>Đã viết</h1>
-          <p className='lg:text-2xl sm:text-lg text-blue-600'>{stats.reports_written}</p>
-          <p className='lg:text-2xl sm:text-lg font-bold'>Báo cáo</p>
-        </article>
-      </section>
-    </form>
+        </form >
+      }
+    </div>
   )
 }
