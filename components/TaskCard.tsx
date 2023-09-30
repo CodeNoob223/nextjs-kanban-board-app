@@ -107,7 +107,7 @@ export default function TaskCard(props: TaskCardType): JSX.Element {
     </Draggable>
     {
       popUp &&
-      <section className="absolute top-0 left-0 w-[100vw] h-[100vh] bg-slate-950/[.5]"
+      <section className="fixed top-0 left-0 w-[100vw] h-[100vh] bg-slate-950/[.5]"
         onClick={(e) => {
           setPopUp(false);
         }}

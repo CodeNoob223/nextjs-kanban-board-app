@@ -46,7 +46,7 @@ export default function LoginPage(): JSX.Element {
       return;
     }
 
-    localStorage.setItem("isAuth", "true");
+    localStorage.clear();
     location.replace("/");
   }
 

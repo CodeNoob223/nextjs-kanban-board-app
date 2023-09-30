@@ -156,14 +156,17 @@ export default function ToDosList({ todos }: { todos: Task[] }) {
 
     newData.splice(index, 0, newToDo);
 
-    let newOrder = newData.map(td => td.task_id);
-    localStorage.setItem(colName + "Order", JSON.stringify(newOrder));
-
-    dispatch(updateTodos({
-      id: newToDo.task_id,
-      status: newToDo.status,
-      progress: ""
-    }));
+    if (newData.length > 0) {
+      console.log(newData);
+      let newOrder = newData.map(td => td.task_id);
+      localStorage.setItem(colName + "Order", JSON.stringify(newOrder));
+  
+      dispatch(updateTodos({
+        id: newToDo.task_id,
+        status: newToDo.status,
+        progress: ""
+      }));
+    }
 
     // if (colName === "pending") {
     //   setPending(newData);
