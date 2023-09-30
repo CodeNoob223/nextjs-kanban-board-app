@@ -12,9 +12,10 @@ import { addNotification } from "@/store/slices/notificationSlice";
 import { deleteOwnProject, fetchNewProjectMember, fetchNewTaskData, fetchProjectData, filterProjectMember, filterProjectTask, removeTaskMember } from "@/store/slices/projectSlice";
 import { filterUserProjectList, putProject } from "@/store/slices/userDataSlice";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import Link from "next/link";
 import { useEffect, useState } from "react";
-import { FaArrowLeft, FaArrowRight, FaPen, FaSave, FaTrash, FaUsers } from "react-icons/fa";
-import { FaArrowRightFromBracket, FaUser } from "react-icons/fa6";
+import { FaArrowLeft, FaArrowRight, FaFileInvoice, FaPen, FaSave, FaTrash, FaUsers } from "react-icons/fa";
+import { FaArrowRightFromBracket, FaMessage, FaUser } from "react-icons/fa6";
 
 export default function Page({ params }: {
   params: {
@@ -214,6 +215,14 @@ export default function Page({ params }: {
               }
             </div>
             <p><span className="font-bold">Mô tả: </span>{project.description || "Không có mô tả"}</p>
+            <div className="flex gap-2">
+              <Link href={`/messages?project=${params.slug}`} className="p-2 bg-blue-600 hover:bg-blue-500 rounded text-slate-50">
+                <FaMessage className="text-xl" />
+              </Link>
+              <Link href={`/reports?project=${params.slug}`} className="p-2 bg-orange-600 hover:bg-orange-500 rounded text-slate-50">
+                <FaFileInvoice className="text-xl" />
+              </Link>
+            </div>
             <div className={`absolute w-max bg-slate-950 text-slate-300 sm:top-4 top-11 sm:right-4 right-2 sm:translate-x-0 ${showMembers ? "" : "translate-x-[190px]"} transition-all duration-75 ease-in-out max-w-[190px] shadow-lg p-3 rounded flex flex-col gap-4`}>
               <button onClick={() => setShowMembers(prev => !prev)} className="sm:hidden absolute -left-6 bg-inherit p-2 rounded">
                 {showMembers ?
