@@ -215,6 +215,7 @@ export default function Page({ params }: {
               }
             </div>
             <p><span className="font-bold">Mô tả: </span>{project.description || "Không có mô tả"}</p>
+            <p><span className="font-bold">Tiến độ: </span>{project.tasks.length > 0 ? project.tasks.filter(task => task.status === "Done").length / project.tasks.length * 100 + "%" : "0%"}</p>
             <div className="flex gap-2">
               <Link href={`/messages?project=${params.slug}`} className="p-2 bg-blue-600 hover:bg-blue-500 rounded text-slate-50">
                 <FaMessage className="text-xl" />
