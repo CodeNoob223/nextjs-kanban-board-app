@@ -264,6 +264,7 @@ const projectSlice = createSlice({
     },
     addTaskMember: (state: Project, action: PayloadAction<{
       task_id: number,
+      id: number,
       username: string,
       avatar_url: string,
       profile_id: string

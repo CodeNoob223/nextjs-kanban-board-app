@@ -69,7 +69,7 @@ export async function DELETE(request: Request) {
   if (workers_left && parseInt(workers_left) === 1) {
     const res = await supabase.from("tasks").update({
       status: "Pending"
-    });
+    }).eq('task_id', task_id);
 
     if (res.error) console.log("Change status: ", res.error);
   }

@@ -9,13 +9,13 @@ import { Database } from "@/lib/database.types";
 import { useAppDispatch } from "@/store";
 import { useAppSelector } from "@/store/hooks";
 import { addNotification } from "@/store/slices/notificationSlice";
-import { deleteOwnProject, fetchNewProjectMember, fetchNewTaskData, fetchProjectData, filterProjectMember, filterProjectTask, removeTaskMember } from "@/store/slices/projectSlice";
+import { deleteOwnProject, fetchNewProjectMember, fetchNewTaskData, fetchProjectData, filterProjectMember, filterProjectTask } from "@/store/slices/projectSlice";
 import { filterUserProjectList, putProject } from "@/store/slices/userDataSlice";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { FaArrowLeft, FaArrowRight, FaFileInvoice, FaPen, FaSave, FaTrash, FaUsers } from "react-icons/fa";
-import { FaArrowRightFromBracket, FaMessage, FaUser } from "react-icons/fa6";
+import { FaArrowRight, FaFileInvoice, FaPen, FaSave, FaTrash, FaUsers } from "react-icons/fa";
+import { FaArrowRightFromBracket, FaMessage } from "react-icons/fa6";
 
 export default function Page({ params }: {
   params: {
@@ -92,10 +92,9 @@ export default function Page({ params }: {
 
           if (res.meta.requestStatus === "rejected") console.log(res);
         } else if (payload.eventType === "DELETE") {
-          dispatch(removeTaskMember({
-            profile_id: payload.old.profile_id,
-            task_id: payload.old.task_id
-          }));
+          const res = await dispatch(fetchNewTaskData(payload.old.task_id as number));
+
+          if (res.meta.requestStatus === "rejected") console.log(res);
         }
       })
       .on("postgres_changes", {
@@ -245,18 +244,18 @@ export default function Page({ params }: {
                 <p className="font-bold">Thành viên:</p>
                 {
                   project.project_members.length > 1 ?
-                  project.project_members.map(member => {
-                    if (member.profiles && member.profiles.profile_id !== project.team_lead.profile_id)
-                      return <SmallUserCard
-                        key={member.profiles.profile_id}
-                        className="bg-transparent"
-                        avatar_url={member.profiles.avatar_url}
-                        username={member.profiles.username}
-                        profile_id={member.profiles.profile_id}
-                        kickAble={userData?.profile_id === project.team_lead.profile_id && member.profiles.profile_id !== userData?.profile_id}
-                        project_id={parseInt(params.slug)}
-                      />
-                  }) : <p>Chưa có thành viên</p>
+                    project.project_members.map(member => {
+                      if (member.profiles && member.profiles.profile_id !== project.team_lead.profile_id)
+                        return <SmallUserCard
+                          key={member.profiles.profile_id}
+                          className="bg-transparent"
+                          avatar_url={member.profiles.avatar_url}
+                          username={member.profiles.username}
+                          profile_id={member.profiles.profile_id}
+                          kickAble={userData?.profile_id === project.team_lead.profile_id && member.profiles.profile_id !== userData?.profile_id}
+                          project_id={parseInt(params.slug)}
+                        />
+                    }) : <p>Chưa có thành viên</p>
                 }
               </div>
             </div>
