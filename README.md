@@ -3,18 +3,6 @@
 Allow users to manage projects with tasks, communicates.
 Have drag and drop implemented.
 
-## Getting Started
-
-First, run the development server:
-
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-```
-
 ## Technologies
 
 Languagues: HTML, CSS, JavaScript, Typescript
@@ -22,6 +10,27 @@ Frontend: NextJs, TailwindCSS
 Backend: Supabase
 Libraries: Redux, React beautiful DnD, React icons
 
+## Installation:
+
+Create a `.env.local` in the root directory
+Fill in the following
+
+```
+SUPA_BASE_PASSWORD=GetInSupabaseDashboard
+
+AUTH_SECRET=WhatEverYouChoose
+NEXT_PUBLIC_SUPABASE_URL=GetInSupabaseDashboard
+NEXT_PUBLIC_SUPABASE_ANON_KEY=GetInSupabaseDashboard
+SUPABASE_SERVICE_ROLE_KEY=GetInSupabaseDashboard
+```
+## Start developing:
+```bash
+npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+```
 
 ## Deploy on Vercel
 
