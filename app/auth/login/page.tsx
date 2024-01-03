@@ -50,7 +50,8 @@ export default function LoginPage(): JSX.Element {
     }
 
     localStorage.clear();
-    location.replace("/");
+    router.push("/");
+    router.refresh();
   }
 
   const googleSignIn = async () => {

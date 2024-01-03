@@ -18,7 +18,7 @@ export const AuthProvider = ({ children }: {
       const {data, error} = await supabase.auth.getSession();
 
       if (error || data.session === null) {
-        console.log("No user session found!");
+        console.log("AuthProvider: No user session found!");
         if (error) console.log(error);
         setLoading(false);
         return;
