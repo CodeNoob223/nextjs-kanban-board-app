@@ -28,7 +28,7 @@ export default function LoginPage(): JSX.Element {
   }, [supabase.auth, router]);
 
 
-  const handleKeyDown = async (event: React.KeyboardEvent<HTMLDivElement>) => {
+  const handleKeyDown = async (event: React.KeyboardEvent<HTMLFormElement>) => {
     if (event.key === "Enter") {
       await handleSignIn();
     }
@@ -95,7 +95,7 @@ export default function LoginPage(): JSX.Element {
   }
 
   return (
-    <div onKeyDown={handleKeyDown} className="absolute flex flex-col 
+    <form onSubmit={e => e.preventDefault()} onKeyDown={handleKeyDown} className="absolute flex flex-col 
     gap-3 left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%] 
     sm:w-max w-[90%] 
     h-max 
@@ -170,6 +170,6 @@ export default function LoginPage(): JSX.Element {
           </div>
         </button>
       </div>
-    </div >
+    </form >
   )
 }

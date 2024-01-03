@@ -32,7 +32,7 @@ export default function RegisterPage(): JSX.Element {
     CheckLoggedIn();
   }, [supabase.auth, router]);
 
-  const handleKeyDown = async (event: React.KeyboardEvent<HTMLDivElement>) => {
+  const handleKeyDown = async (event: React.KeyboardEvent<HTMLFormElement>) => {
     if (event.key === "Enter") {
       await handleSignUp();
     }
@@ -111,7 +111,7 @@ export default function RegisterPage(): JSX.Element {
   }
 
   return (
-    <div onKeyDown={handleKeyDown} className="absolute flex flex-col 
+    <form onSubmit={e => e.preventDefault()} onKeyDown={handleKeyDown} className="absolute flex flex-col 
     gap-3 left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%] 
     sm:w-max w-[90%] 
     h-max 
@@ -232,6 +232,6 @@ export default function RegisterPage(): JSX.Element {
           </button>
       }
       <p className="text-center">Đã có tài khoản? <a href="/auth/login" className="underline hover:text-primary cursor-pointer">Đăng nhập</a></p>
-    </div >
+    </form >
   )
 }
