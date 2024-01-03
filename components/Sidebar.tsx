@@ -34,8 +34,9 @@ export default function Sidebar(): JSX.Element {
   useEffect(() => {
     const getProjects = async () => {
       const { data: { session } } = await supabase.auth.getSession();
-      console.log(session);
+      
       if (session?.user) {
+        console.log("Sidebar: session.user exists! Now getting projects icons");
         const data = await dispatch(fetchProjects(10)); // 10 is limit number
 
         if (data.meta.requestStatus === "rejected") {

@@ -22,6 +22,9 @@ export async function GET(request: Request) {
   `).eq("profile_id", user.data.user?.id);
 
   if (error) console.log(error);
+
+  console.log("<GET: projects/api>: Fetch projects successfully!");
+
   return NextResponse.json({
     data: data?.map(project => {
       return {

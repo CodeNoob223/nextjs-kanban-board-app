@@ -7,7 +7,7 @@ export const fetchProjects = createAsyncThunk("user/fetchProjects", async (limit
     method: "get"
   });
 
-  console.log("fetching projects");
+  console.log("userDataSlice: fetching projects");
 
   const { data, error }: GetSupaBaseRes<Project> = await res.json();
 
