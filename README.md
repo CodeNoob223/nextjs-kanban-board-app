@@ -1,19 +1,19 @@
 ## Green kaban board
 
-Allow users to manage projects with tasks, communicates.
-Have drag and drop implemented.
+- Allow users to manage projects with tasks, reports, chat.
+- Have drag and drop implemented.
 
 ## Technologies
 
-Languagues: HTML, CSS, JavaScript, Typescript
-Frontend: NextJs, TailwindCSS
-Backend: Supabase
-Libraries: Redux, React beautiful DnD, React icons
+- Languagues: HTML, CSS, JavaScript, Typescript
+- Frontend: NextJs, TailwindCSS
+- Backend: [Supabase](https://supabase.com/)
+- Libraries: Redux, React beautiful DnD, React icons
 
 ## Installation:
 
-Create a `.env.local` in the root directory
-Fill in the following
+1. Create a `.env.local` in the root directory
+2. Fill in the following
 
 ```
 SUPA_BASE_PASSWORD=GetInSupabaseDashboard
@@ -32,7 +32,9 @@ yarn dev
 pnpm dev
 ```
 
-## Deploy on Vercel
+## Demo on Vercel
+
+> https://greenkanban.vercel.app/
 
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
