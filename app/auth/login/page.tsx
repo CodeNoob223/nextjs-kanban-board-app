@@ -1,5 +1,5 @@
 "use client";
-import { FaGoogle, FaGithub, FaLock, FaEnvelope } from "react-icons/fa";
+import { FaGoogle, FaGithub, FaLock, FaEnvelope, FaHourglass } from "react-icons/fa";
 import { useState, useEffect } from "react";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { Database } from "@/lib/database.types";
@@ -10,10 +10,12 @@ import { addNotification } from "@/store/slices/notificationSlice";
 export default function LoginPage(): JSX.Element {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const supabase = createClientComponentClient<Database>();
   const dispatch = useAppDispatch();
   const router = useRouter();
   useEffect(() => {
+    console.log("Login useEffect run");
     const CheckLoggedIn = async () => {
       const { data: { session } } = await supabase.auth.getSession();
 
@@ -33,6 +35,7 @@ export default function LoginPage(): JSX.Element {
   }
 
   const handleSignIn = async () => {
+    setIsLoading(true);
     const { error } = await supabase.auth.signInWithPassword({
       email,
       password
@@ -133,11 +136,21 @@ export default function LoginPage(): JSX.Element {
         />
       </div>
 
-      <button type="button" onClick={handleSignIn} className="py-2 px-4 max-w-[400px] mx-auto bg-slate-950 hover:bg-primary hover:text-slate-950 transition-colors duration-200 rounded overflow-hidden w-full text-slate-100">
-        <div className="flex gap-2 items-center w-max mx-auto">
-          <FaEnvelope /> Đăng nhập
-        </div>
-      </button>
+      {
+        isLoading ?
+          <button type="button" className="py-2 px-4 max-w-[400px] mx-auto bg-slate-950 rounded overflow-hidden w-full text-slate-100 cursor-wait">
+            <div className="flex gap-2 items-center w-max mx-auto">
+              <FaHourglass /> Đang tải
+            </div>
+          </button>
+          :
+          <button type="button" onClick={handleSignIn} className="py-2 px-4 max-w-[400px] mx-auto bg-slate-950 hover:bg-primary hover:text-slate-950 transition-colors duration-200 rounded overflow-hidden w-full text-slate-100">
+            <div className="flex gap-2 items-center w-max mx-auto">
+              <FaEnvelope /> Đăng nhập
+            </div>
+          </button>
+      }
+
       <p className="text-center">Tạo tài khoản? <a href="/auth/register" className="underline hover:text-primary cursor-pointer">Đăng ký</a></p>
 
       <div className="relative text-slate-400 mt-1 w-full max-w-[400px] mx-auto">

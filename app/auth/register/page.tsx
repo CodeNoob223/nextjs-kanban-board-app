@@ -1,5 +1,5 @@
 "use client";
-import { FaLock, FaEnvelope, FaUser, FaHashtag, FaImage, FaPhoneSquareAlt } from "react-icons/fa";
+import { FaLock, FaEnvelope, FaUser, FaHashtag, FaHourglass, FaPhoneSquareAlt } from "react-icons/fa";
 import { useState, useEffect } from "react";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { Database } from "@/lib/database.types";
@@ -15,6 +15,7 @@ export default function RegisterPage(): JSX.Element {
   const [avatarUrl, setAvatarUrl] = useState<string>("");
   const [full_name, setFull_Name] = useState<string>("");
   const [phone, setPhone] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const supabase = createClientComponentClient<Database>();
   const router = useRouter();
   const dispatch = useAppDispatch();
@@ -38,7 +39,10 @@ export default function RegisterPage(): JSX.Element {
   }
 
   const handleSignUp = async () => {
+    setIsLoading(true);
+
     if (username === "") {
+      setIsLoading(false);
       dispatch(addNotification({
         content: "Vui lòng nhập biệt danh!",
         type: "error"
@@ -47,6 +51,7 @@ export default function RegisterPage(): JSX.Element {
     }
 
     if (username.length < 5) {
+      setIsLoading(false);
       dispatch(addNotification({
         content: "Biệt danh quá ngắn!",
         type: "error"
@@ -55,6 +60,7 @@ export default function RegisterPage(): JSX.Element {
     }
 
     if (full_name === "") {
+      setIsLoading(false);
       dispatch(addNotification({
         content: "Vui lòng nhập họ và tên!",
         type: "error"
@@ -63,6 +69,7 @@ export default function RegisterPage(): JSX.Element {
     }
 
     if (full_name.length < 10) {
+      setIsLoading(false);
       dispatch(addNotification({
         content: "Họ và tên quá ngắn!",
         type: "error"
@@ -86,6 +93,7 @@ export default function RegisterPage(): JSX.Element {
     });
 
     if (error) {
+      setIsLoading(false);
       dispatch(addNotification({
         content: error.message!,
         type: "error",
@@ -209,11 +217,20 @@ export default function RegisterPage(): JSX.Element {
           value={phone}
         />
       </div>
-      <button type="button" onClick={handleSignUp} className="py-2 max-w-[400px] mx-auto px-4 bg-slate-950 hover:bg-primary hover:text-slate-950 transition-colors duration-200 rounded overflow-hidden w-full text-slate-100">
-        <div className="flex gap-2 items-center w-max mx-auto">
-          <FaEnvelope /> Đăng ký
-        </div>
-      </button>
+      {
+        isLoading ?
+          <button type="button" className="py-2 max-w-[400px] mx-auto px-4 bg-slate-950 cursor-wait duration-200 rounded overflow-hidden w-full text-slate-100">
+            <div className="flex gap-2 items-center w-max mx-auto">
+              <FaHourglass /> Đang tải
+            </div>
+          </button>
+          :
+          <button type="button" onClick={handleSignUp} className="py-2 max-w-[400px] mx-auto px-4 bg-slate-950 hover:bg-primary hover:text-slate-950 transition-colors duration-200 rounded overflow-hidden w-full text-slate-100">
+            <div className="flex gap-2 items-center w-max mx-auto">
+              <FaEnvelope /> Đăng ký
+            </div>
+          </button>
+      }
       <p className="text-center">Đã có tài khoản? <a href="/auth/login" className="underline hover:text-primary cursor-pointer">Đăng nhập</a></p>
     </div >
   )

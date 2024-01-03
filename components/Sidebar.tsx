@@ -48,7 +48,7 @@ export default function Sidebar(): JSX.Element {
       setIsLoading(false);
     }
     getProjects();
-  }, [dispatch, supabase]);
+  }, [dispatch, supabase, pathname]);
 
   useEffect(() => {
     const channel = supabase.channel("profile-projects")
@@ -85,7 +85,7 @@ export default function Sidebar(): JSX.Element {
     return () => {
       channel.unsubscribe();
     }
-  }, [user?.profile_id, user?.projects, supabase, dispatch])
+  }, [user?.profile_id, user?.projects, supabase, dispatch, pathname])
 
   const postNewProject = async () => {
     if (!projectId && !projectName) {
